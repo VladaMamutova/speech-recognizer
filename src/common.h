@@ -29,6 +29,11 @@
 typedef int16_t raw_t;
 
 /**
+ * Accuracy in the output of MFCC
+ */
+const std::streamsize MFCC_PRECISION = 6;
+
+/**
  * Length of frame (ms)
  */
 const uint32_t FRAME_LENGTH = 50;

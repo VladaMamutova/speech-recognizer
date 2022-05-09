@@ -47,6 +47,11 @@ private:
 	 * Read Wav data from the file
 	 */
 	bool readData(Context& context, const char* inputFile);
+
+	/**
+	 * Display the MFCC coefficients retrieved from the input data
+	 */
+	void displayMfcc(Context& context);
 };
 
 } /* namespace command */

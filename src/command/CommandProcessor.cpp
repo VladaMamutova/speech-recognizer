@@ -1,6 +1,9 @@
-#include <CommandProcessor.h>
 #include <getopt.h>
 #include <iostream>
+#include <vector>
+#include "CommandProcessor.h"
+#include "MfccEntry.h"
+#include "../audio/Processor.h"
 
 namespace command {
 
@@ -64,11 +67,10 @@ void CommandProcessor::process()
 				printVersion();
 				break;
 			case 'h':
-				printVersion();
 				printHelp();
 				break;
-
 			case 'm':
+			  displayMfcc(*this->context);
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
@@ -102,6 +104,41 @@ bool CommandProcessor::readData(Context& context, const char* inputFile)
 	}
 
 	return wavData != NULL;
+}
+
+void CommandProcessor::displayMfcc(Context& context)
+{
+  // Check pre-requirements
+	if (context.getWavData() == NULL) {
+		cerr << "Input data is not specified :(" << endl;
+		return;
+	}
+
+  cout << "Calculating MFCC for input data... " << endl;
+
+	Processor* processor = new Processor(context.getWavData());
+	processor->init();
+
+	const vector<Frame*>* frames = processor->getFrames();
+	vector<MfccEntry*>* mfcc = new vector<MfccEntry*>();
+
+	vector<Frame*>::const_iterator frame;
+	for (frame = frames->begin(); frame != frames->end(); ++frame) {
+		processor->initMfcc(*frame);
+
+		MfccEntry* entry = new MfccEntry((*frame)->getMFCC());
+		mfcc->push_back(entry);
+	}
+
+  // Print MFCC
+	cout << endl << "MFCC coefficients: " << endl;
+	for(vector<MfccEntry*>::const_iterator iter = mfcc->begin();
+			iter != mfcc->end(); iter++) {
+		(*iter)->print();
+	}
+	cout << endl;
+
+	delete mfcc;
 }
 
 } /* namespace command */

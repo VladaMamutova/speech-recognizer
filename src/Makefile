@@ -2,8 +2,8 @@ CC = g++
 CFLAGS = -Wall -Wextra -pedantic -std=gnu++0x
 LFLAGS = -pthread
 
-INCLUDES = -I audio -I command
-SRC = audio/Wav.cpp command/CommandProcessor.cpp main.cpp
+INCLUDES = -I math -I audio -I command
+SRC = math/*.cpp audio/*.cpp command/*.cpp main.cpp
 OBJ_DIR = obj
 
 OBJECTS = $(patsubst %.o,$(OBJ_DIR)/%.o, $(SRC:.c=.o))

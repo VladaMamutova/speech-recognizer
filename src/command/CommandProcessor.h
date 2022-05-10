@@ -1,7 +1,9 @@
 #ifndef COMMAND_PROCESSOR_H
 #define COMMAND_PROCESSOR_H
 
-#include <Context.h>
+#include "../audio/Processor.h"
+
+using namespace audio;
 
 namespace command {
 
@@ -10,28 +12,30 @@ namespace command {
  */
 class CommandProcessor {
 public:
-	CommandProcessor(int argc, char** argv):
-		argc(argc), argv(argv) {
-
-		this->context = new Context();
-	};
-
-	~CommandProcessor() {
-		delete this->context;
-	}
+	CommandProcessor(int argc, char** argv);
+	~CommandProcessor();
 
 	void process();
 
 private:
-
 	// Input data
 	int argc;
 	char** argv;
 
 	/**
-	 * Current execution context
+	 * Speech processor
 	 */
-	Context* context;
+	Processor* speechProcessor;
+
+	/**
+	 * Reads speech input data
+	 */
+	void readSpeechData();
+
+	/**
+	 * Checks if the speech input data specified
+	 */
+	void checkSpeechData();
 
 	/**
 	 * Print build information
@@ -44,14 +48,9 @@ private:
 	void printHelp();
 
 	/**
-	 * Read Wav data from the file
-	 */
-	bool readData(Context& context, const char* inputFile);
-
-	/**
 	 * Display the MFCC coefficients retrieved from the input data
 	 */
-	void displayMfcc(Context& context);
+	void displayMfcc();
 };
 
 } /* namespace command */

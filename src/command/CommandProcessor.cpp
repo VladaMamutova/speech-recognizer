@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include "CommandProcessor.h"
-#include "MfccEntry.h"
 #include "../audio/Processor.h"
 
 namespace command {
@@ -16,6 +15,7 @@ static struct option longOptions[] = {
 
 	{ "mfcc", optional_argument, 0, 'm' },
 };
+
 static const char* const shortOptions = "vhm:";
 
 /**
@@ -44,16 +44,13 @@ static const char* const helpInfo =	EOL
 void CommandProcessor::process()
 {
 	if (argc <= 1) {
-		cout << "No input parameters specified. " << endl;
-		cout << "Please take a look on the help info for details: " << endl;
+		cout << "No input parameters specified." << endl;
+		cout << "Please take a look on the help info for details:" << endl;
 		printHelp();
 		return;
 	}
 
-	if (argv[argc - 1][0] != '-' && !readData(*this->context, argv[argc - 1])) {
-		cout << "Error: Failed to load input data from the file \"" << argv[argc - 1] << "\"." << endl;
-		return;
-	}
+	readSpeechData();
 
   bool processed = false;
 	int option;
@@ -70,7 +67,8 @@ void CommandProcessor::process()
 				printHelp();
 				break;
 			case 'm':
-			  displayMfcc(*this->context);
+			  checkSpeechData();
+			  displayMfcc();
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
@@ -78,6 +76,43 @@ void CommandProcessor::process()
 				break;
 		}
 	} while (!processed);
+}
+
+CommandProcessor::CommandProcessor(int argc, char** argv)
+{
+	this->argc = argc;
+	this->argv = argv;
+	this->speechProcessor = NULL;
+}
+
+CommandProcessor::~CommandProcessor() {
+	if (this->speechProcessor != NULL)
+	{
+		delete this->speechProcessor;
+	}
+}
+
+void CommandProcessor::readSpeechData()
+{
+	// Skip this step if the argument starts with a '-' (it is an option).
+	if (argv[argc - 1][0] == '-') return;
+
+	WavData* wavData = WavData::readFromFile(argv[argc - 1]);
+	if (wavData == NULL) {
+		exit(1);
+	}
+
+	speechProcessor = new Processor(wavData);
+}
+
+void CommandProcessor::checkSpeechData()
+{
+	if (speechProcessor == NULL || speechProcessor->getWavData() == NULL)
+	{
+		cout << "Error: No input data specified." << endl;
+		cout << "Please take a look on the help info for details:" << endl;
+		exit(1);
+	}
 }
 
 void CommandProcessor::printVersion()
@@ -90,55 +125,10 @@ void CommandProcessor::printHelp()
 	cout << helpInfo << endl;
 }
 
-bool CommandProcessor::readData(Context& context, const char* inputFile)
+void CommandProcessor::displayMfcc()
 {
-	if (inputFile == NULL) {
-		cout << "Input file is not specified." << endl;
-		return false;
-	}
-
-	WavData* wavData = WavData::readFromFile(inputFile);
-
-	if (wavData != NULL) {
-		context.setWavData(wavData);
-	}
-
-	return wavData != NULL;
-}
-
-void CommandProcessor::displayMfcc(Context& context)
-{
-  // Check pre-requirements
-	if (context.getWavData() == NULL) {
-		cerr << "Input data is not specified :(" << endl;
-		return;
-	}
-
-  cout << "Calculating MFCC for input data... " << endl;
-
-	Processor* processor = new Processor(context.getWavData());
-	processor->init();
-
-	const vector<Frame*>* frames = processor->getFrames();
-	vector<MfccEntry*>* mfcc = new vector<MfccEntry*>();
-
-	vector<Frame*>::const_iterator frame;
-	for (frame = frames->begin(); frame != frames->end(); ++frame) {
-		processor->initMfcc(*frame);
-
-		MfccEntry* entry = new MfccEntry((*frame)->getMFCC());
-		mfcc->push_back(entry);
-	}
-
-  // Print MFCC
-	cout << endl << "MFCC coefficients: " << endl;
-	for(vector<MfccEntry*>::const_iterator iter = mfcc->begin();
-			iter != mfcc->end(); iter++) {
-		(*iter)->print();
-	}
-	cout << endl;
-
-	delete mfcc;
+  speechProcessor->divideIntoFrames();
+	speechProcessor->printFramesMfcc();
 }
 
 } /* namespace command */

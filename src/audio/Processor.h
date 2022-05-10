@@ -1,5 +1,5 @@
 #ifndef PROCESSOR_H
-#define PROCESSOR_H
+#define PROCESSOR_H // rename to audio processor
 
 #include <vector>
 #include <map>
@@ -8,6 +8,8 @@
 #include "../common.h"
 #include "Wav.h"
 #include "Frame.h"
+
+using namespace std;
 
 namespace audio {
 
@@ -21,22 +23,20 @@ public:
 	Processor(WavData* wavData);
 	~Processor();
 
-	void init();
-	void initMfcc(Frame* frame);
+  const WavData* getWavData() const;
 
-	const std::vector<Frame*>* getFrames() const { return this->frames; }
+  void divideIntoFrames();
+  vector<Frame*>* getFrames();
+  void printFramesMfcc();
 
 private:
 	WavData* wavData;
 
-	std::vector<Frame*>* frames;
-	std::map<uint32_t, std::pair<uint32_t, uint32_t> >* frameToRaw;
+	vector<Frame*>* frames;
 	uint32_t samplesPerFrame;
 
-	void divideIntoFrames();
+  uint32_t calculateSamplesPerFrame();
 };
-
-typedef Processor* ProcessorPtr;
 
 } /* namespace audio */
 

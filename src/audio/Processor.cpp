@@ -17,9 +17,7 @@ namespace audio {
 Processor::Processor(WavData* wavData)
 {
 	this->wavData = wavData;
-
-	this->frames = new vector<Frame*>();
-	this->frameToRaw = new map<uint32_t, std::pair<uint32_t, uint32_t> >();
+	this->frames = NULL;
 	this->samplesPerFrame = 0;
 }
 
@@ -34,37 +32,31 @@ Processor::~Processor()
 
 		delete this->frames;
 	}
-
-	if (NULL != this->frameToRaw) {
-		delete this->frameToRaw;
-	}
 }
 
-void Processor::init()
+uint32_t Processor::calculateSamplesPerFrame()
 {
-	// Init "samples per frame" measure
 	uint32_t bytesPerFrame = static_cast<uint32_t>(
-			this->wavData->getHeader().bytesPerSec * FRAME_LENGTH / 1000.0);
+		this->wavData->getHeader().bytesPerSec * FRAME_LENGTH / 1000.0);
+
 	uint32_t bytesPerSample = static_cast<uint32_t>(
-			this->wavData->getHeader().bitsPerSample / 8);
-	this->samplesPerFrame = static_cast<uint32_t>(bytesPerFrame / bytesPerSample);
-	assert(this->samplesPerFrame > 0);
+		this->wavData->getHeader().bitsPerSample / 8);
 
-	// The main part of splitting
-	divideIntoFrames();
+	uint32_t samplesPerFrame = static_cast<uint32_t>(bytesPerFrame / bytesPerSample);
+	assert(samplesPerFrame > 0);
+  return samplesPerFrame;
 }
 
-void Processor::initMfcc(Frame* frame)
-{
-	uint32_t rawBegin = (*this->frameToRaw)[frame->getId()].first;
-	uint32_t rawFinish = (*this->frameToRaw)[frame->getId()].second;
-
-	frame->initMFCC(this->wavData->getNormalizedData(), rawBegin, rawFinish,
-			this->wavData->getHeader().samplesPerSec);
-}
+const WavData* Processor::getWavData() const { return this->wavData; }
 
 void Processor::divideIntoFrames()
 {
+  if (this->frames != NULL) return;
+
+  cout << "Dividing into frames and calculating MFCC... " << endl;
+  this->samplesPerFrame = calculateSamplesPerFrame();
+  this->frames = new vector<Frame*>();
+
 	unsigned int samplesPerNonOverlap =
 		static_cast<unsigned int>(this->samplesPerFrame * (1 - FRAME_OVERLAP));
 	unsigned int framesCount =
@@ -77,13 +69,33 @@ void Processor::divideIntoFrames()
 		indexBegin = frameId * samplesPerNonOverlap;
 		indexEnd = indexBegin + samplesPerFrame;
 		if (indexEnd < size) {
-			Frame* frame = new Frame(frameId);
-			frame->init(this->wavData->getRawData(), this->wavData->getNormalizedData(),
-					indexBegin, indexEnd);
+			Frame* frame = new Frame(frameId, indexBegin, indexEnd);
+			frame->init(this->wavData->getRawData(),this->wavData->getNormalizedData(),
+				this->wavData->getHeader().samplesPerSec);
 
 			this->frames->insert(this->frames->begin() + frameId, frame);
-			this->frameToRaw->insert(std::make_pair(frameId, make_pair(indexBegin, indexEnd)));
 		}
+	}
+}
+
+vector<Frame*>* Processor::getFrames() { return this->frames; }
+
+void Processor::printFramesMfcc()
+{ 
+	vector<Frame*>::const_iterator frame;
+	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {
+		cout << "[";
+
+		double* mfcc = (*frame)->getMfcc();
+		for (size_t i = 0; i < MFCC_SIZE; i++) {
+			cout << mfcc[i];
+
+			if (i < MFCC_SIZE - 1) {
+				cout << ", ";
+			}
+		}
+
+	  cout << "]" << endl;
 	}
 }
 

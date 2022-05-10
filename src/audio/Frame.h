@@ -16,40 +16,29 @@ namespace audio {
 class Frame {
 
 public:
-	/**
-	 * Create a frame
-	 */
-	Frame(uint32_t id);
+	Frame(uint32_t id, uint32_t start, uint32_t end);
 	~Frame();
 
 	/**
 	 * Init the frame using a part of wave data
 	 */
-	void init(const raw_t* source, const double* sourceNormalized, uint32_t start, uint32_t finish);
+	void init(const raw_t* source, const double* sourceNormalized, uint32_t frequency);
 
-	/**
-	 * Get frame's serial number
-	 */
-	uint32_t getId() const { return this->id; }
+	uint32_t getId() const;
+	uint32_t getStart() const;
+	uint32_t getEnd() const;
 
-	/**
-	 * Get Root Mean Square
-	 */
-	double getRms() const { return rms; }
-	double getEntropy() const { return entropy; }
-
-	/**
-	 * Get Mel-frequency cepstral coefficients
-	 */
-	double* getMFCC() const { return mfcc; }
-	double* initMFCC(const double* source, uint32_t start, uint32_t finish, uint32_t fourierLength);
+	double getRms() const;
+	double getEntropy() const;
+	double* getMfcc() const;
 
 private:
 	const uint32_t id;
+	const uint32_t start;
+	const uint32_t end;
 
 	double rms;
 	double entropy;
-
 	double* mfcc;
 };
 

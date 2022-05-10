@@ -22,7 +22,7 @@ WavData* WavData::readFromFile(const std::string& file)
 	fs.open(file.c_str(), std::ios::in | std::ios::binary);
 
 	if (!fs.good()) {
-		fprintf(stderr, "Input file \"%s\" no found.\n", file.c_str());
+		fprintf(stderr, "Error: input file \"%s\" not found.\n", file.c_str());
 		return NULL;
 	}
 

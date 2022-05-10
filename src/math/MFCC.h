@@ -7,7 +7,7 @@
 #include <cmath>
 #include <complex>
 #include <valarray>
-#include "../common.h"
+#include "../config.h"
 
 using namespace std;
 

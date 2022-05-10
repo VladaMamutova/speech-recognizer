@@ -1,7 +1,7 @@
 #ifndef COMMAND_PROCESSOR_H
 #define COMMAND_PROCESSOR_H
 
-#include "../audio/Processor.h"
+#include "../audio/SpeechProcessor.h"
 
 using namespace audio;
 
@@ -18,14 +18,19 @@ public:
 	void process();
 
 private:
-	// Input data
+	// Input arguments
 	int argc;
 	char** argv;
 
 	/**
 	 * Speech processor
 	 */
-	Processor* speechProcessor;
+	SpeechProcessor* speechProcessor;
+
+	/**
+	 * Checks whether input arguments are specified
+	 */
+	void checkInputArguments();
 
 	/**
 	 * Reads speech input data
@@ -40,7 +45,7 @@ private:
 	/**
 	 * Print build information
 	 */
-  void printVersion();
+	void printVersion();
 	
 	/**
 	 * Print help information

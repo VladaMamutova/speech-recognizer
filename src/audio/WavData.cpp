@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <cassert>
@@ -6,31 +5,61 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include "Wav.h"
+#include "WavData.h"
+
+using namespace std;
 
 namespace audio {
 
-/**
- * Read Wav data from a file
- */
-WavData* WavData::readFromFile(const std::string& file)
+WavData::WavData(WavHeader header) {
+	this->header = header;
+	this->rawData = NULL;
+	this->normalizedData = NULL;
+
+	this->maxVal = 0;
+	this->minVal = 0;
+	this->numberOfSamples = 0;
+}
+
+WavData::~WavData() {
+	if (NULL != this->rawData) {
+		delete [] this->rawData;
+	}
+	if (NULL != this->normalizedData) {
+		delete [] this->normalizedData;
+	}
+}
+
+uint32_t WavData::getNumberOfSamples() const { return numberOfSamples; }
+void WavData::setNumberOfSamples(uint32_t numberOfSamples) { this->numberOfSamples = numberOfSamples; }
+
+raw_t WavData::getMaxVal() const { return maxVal; }
+void WavData::setMaxVal(raw_t maxVal) { this->maxVal = maxVal; }
+
+raw_t WavData::getMinVal() const { return minVal; }
+void WavData::setMinVal(raw_t minVal) { this->minVal = minVal; }
+
+const WavHeader& WavData::getHeader() const { return header; }
+const raw_t* WavData::getRawData() const { return rawData; }
+const double* WavData::getNormalizedData() const { return normalizedData; }
+
+WavData* WavData::readFromFile(const string& file)
 {
 	WavHeader wavHeader;
 
-	// Open file
-	std::fstream fs;
-	fs.open(file.c_str(), std::ios::in | std::ios::binary);
+	fstream fs;
+	fs.open(file.c_str(), ios::in | ios::binary);
 
 	if (!fs.good()) {
 		fprintf(stderr, "Error: input file \"%s\" not found.\n", file.c_str());
 		return NULL;
 	}
 
-  cout << "Reading WAV data..." << endl;
+	cout << "Reading WAV data from \"" << file << "\"..." << endl;
 
 	// Read header
 	fs.read((char*)(&wavHeader), sizeof(WavHeader));
-	if (!checkHeader(wavHeader)) {
+	if (!wavHeader.isValid()) {
 		return NULL;
 	}
 
@@ -42,39 +71,7 @@ WavData* WavData::readFromFile(const std::string& file)
 	return wavData;
 }
 
-/**
- * Checks a set of restrictions
- */
-bool WavData::checkHeader(const WavHeader& wavHeader) {
-
-	if (0 != strncmp(wavHeader.riff, "RIFF", sizeof(wavHeader.riff))
-			|| 0 != strncmp(wavHeader.wave, "WAVE", sizeof(wavHeader.wave))) {
-		fprintf(stderr, "Invalid RIFF/WAVE format\n");
-		return false;
-	}
-
-	if (1 != wavHeader.audioFormat) {
-		fprintf(stderr, "Invalid WAV format: only PCM audio format is supported\n");
-		return false;
-	}
-
-	if (wavHeader.numOfChan > 2) {
-		fprintf(stderr, "Invalid WAV format: only 1 or 2 channels audio is supported\n");
-		return false;
-	}
-
-	unsigned long bitsPerChannel = wavHeader.bitsPerSample / wavHeader.numOfChan;
-	if (16 != bitsPerChannel) {
-		fprintf(stderr, "Invalid WAV format: only 16-bit per channel is supported\n");
-		return false;
-	}
-
-	assert(wavHeader.subchunk2Size > 0);
-
-	return true;
-}
-
-void WavData::readData(std::fstream& fs, const WavHeader& wavHeader, WavData& wavFile)
+void WavData::readData(fstream& fs, const WavHeader& wavHeader, WavData& wavFile)
 {
 	raw_t value, minValue = 0, maxValue = 0;
 	int16_t value16, valueLeft16, valueRight16;
@@ -85,8 +82,8 @@ void WavData::readData(std::fstream& fs, const WavHeader& wavHeader, WavData& wa
 
 	wavFile.rawData = new raw_t[numberOfSamplesXChannels];
 
-	uint32_t sampleNumber = 0;
-	for (; sampleNumber < numberOfSamplesXChannels && !fs.eof(); sampleNumber++) {
+	uint32_t sampleNumber;
+	for (sampleNumber = 0; sampleNumber < numberOfSamplesXChannels && !fs.eof(); sampleNumber++) {
 
 		if (1 == wavHeader.numOfChan) {
 			fs.read((char*)(&value16), sizeof(int16_t));

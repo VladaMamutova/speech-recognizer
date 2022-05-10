@@ -1,9 +1,9 @@
 /**
- * Common settings
+ * Configuration
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 /**
  * This macro is defined when compiling
@@ -18,7 +18,6 @@
 
 /**
  * Build information
- * 
  */
 #define PROJECT_NAME "speech_recognizer"
 #define PROJECT_VERSION "1.0"
@@ -44,21 +43,6 @@ const uint32_t FRAME_LENGTH = 50;
 const double FRAME_OVERLAP = 0.5;
 
 /**
- * Minimal size of word (in frames)
- * <p>
- * According my experiments average length of the words in my dictionary is 500ms.
- * Let's put that the minimal length of word is 200ms.
- */
-const unsigned short WORD_MIN_SIZE = (200 / FRAME_LENGTH) / (1 - FRAME_OVERLAP);
-
-/**
- * Minimal amount of framer between two words
- * <p>
- * Let's put that minimal distance between two words is 50% of minimal size of word
- */
-const unsigned short WORDS_MIN_DISTANCE = WORD_MIN_SIZE * 0.50;
-
-/**
  * Amount of MFCC coefficients
  */
 const unsigned short MFCC_SIZE = 12;
@@ -75,12 +59,6 @@ const short MFCC_FREQ_MAX = 4000;
 const short ENTROPY_BINS = 75;
 const double ENTROPY_THRESHOLD = 0.1;
 
-/**
- * Codebook threshold
- */
-const double CODEBOOK_THRESHOLD = 25;
-
-
 // Helpers
 
 #define DEBUG_ENABLED true
@@ -89,13 +67,4 @@ const double CODEBOOK_THRESHOLD = 25;
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
-#define EOL "\n"
-#define toString( x ) dynamic_cast< std::ostringstream & >( \
-			( std::ostringstream() << std::dec << x ) ).str()
-
-// Test settings
-
-const double EPS_TEST = 1e-4;
-
-
-#endif /* COMMON_H */
+#endif /* CONFIG_H */

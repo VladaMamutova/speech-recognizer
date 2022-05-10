@@ -2,7 +2,7 @@
 #define BASIC_H
 
 #include <stdint.h>
-#include "../common.h"
+#include "../config.h"
 
 using namespace std;
 

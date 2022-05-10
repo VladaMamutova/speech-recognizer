@@ -2,11 +2,9 @@
 #include <complex>
 #include <valarray>
 #include <cstring>
-#include <limits>
 #include <assert.h>
-#include <time.h>
-#include "../common.h"
-#include <MFCC.h>
+#include "../config.h"
+#include "MFCC.h"
 
 using namespace std;
 
@@ -205,8 +203,8 @@ double** MFCC::getMelFilters(uint8_t mfccSize, uint32_t filterLength, uint32_t f
  * Apply mel filters to spectrum's magnitudes, take the logs of the powers
  */
 double* MFCC::calcPower(const double* fourierRaw, uint32_t fourierLength,
-		double** melFilters, uint8_t mfccCount) {
-
+	double** melFilters, uint8_t mfccCount)
+{
 	double* logPower = new double[mfccCount];
 
 	for (unsigned short m = 0; m < mfccCount; m++) {
@@ -217,7 +215,7 @@ double* MFCC::calcPower(const double* fourierRaw, uint32_t fourierLength,
 		}
 
 		assert("Spectrum power is less than zero" &&
-				!(logPower[m] < numeric_limits<double>::epsilon()));
+			!(logPower[m] < numeric_limits<double>::epsilon()));
 
 		// NOTE I'm not sure that we need to take logs since we normalized the input data
 		logPower[m] = log(logPower[m]);

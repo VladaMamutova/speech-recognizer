@@ -7,21 +7,21 @@
 #include <iostream>
 #include <iterator>
 #include <string>
-#include "Processor.h"
+#include "SpeechProcessor.h"
 #include "Frame.h"
 
 using namespace std;
 
 namespace audio {
 
-Processor::Processor(WavData* wavData)
+SpeechProcessor::SpeechProcessor(WavData* wavData)
 {
 	this->wavData = wavData;
 	this->frames = NULL;
 	this->samplesPerFrame = 0;
 }
 
-Processor::~Processor()
+SpeechProcessor::~SpeechProcessor()
 {
 	if (NULL != this->frames) {
 		vector<Frame*>::const_iterator iter;
@@ -34,22 +34,9 @@ Processor::~Processor()
 	}
 }
 
-uint32_t Processor::calculateSamplesPerFrame()
-{
-	uint32_t bytesPerFrame = static_cast<uint32_t>(
-		this->wavData->getHeader().bytesPerSec * FRAME_LENGTH / 1000.0);
+const WavData* SpeechProcessor::getWavData() const { return this->wavData; }
 
-	uint32_t bytesPerSample = static_cast<uint32_t>(
-		this->wavData->getHeader().bitsPerSample / 8);
-
-	uint32_t samplesPerFrame = static_cast<uint32_t>(bytesPerFrame / bytesPerSample);
-	assert(samplesPerFrame > 0);
-  return samplesPerFrame;
-}
-
-const WavData* Processor::getWavData() const { return this->wavData; }
-
-void Processor::divideIntoFrames()
+void SpeechProcessor::divideIntoFrames()
 {
   if (this->frames != NULL) return;
 
@@ -78,9 +65,9 @@ void Processor::divideIntoFrames()
 	}
 }
 
-vector<Frame*>* Processor::getFrames() { return this->frames; }
+vector<Frame*>* SpeechProcessor::getFrames() { return this->frames; }
 
-void Processor::printFramesMfcc()
+void SpeechProcessor::printFramesMfcc()
 { 
 	vector<Frame*>::const_iterator frame;
 	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {
@@ -97,6 +84,19 @@ void Processor::printFramesMfcc()
 
 	  cout << "]" << endl;
 	}
+}
+
+uint32_t SpeechProcessor::calculateSamplesPerFrame()
+{
+	uint32_t bytesPerFrame = static_cast<uint32_t>(
+		this->wavData->getHeader().bytesPerSec * FRAME_LENGTH / 1000.0);
+
+	uint32_t bytesPerSample = static_cast<uint32_t>(
+		this->wavData->getHeader().bitsPerSample / 8);
+
+	uint32_t samplesPerFrame = static_cast<uint32_t>(bytesPerFrame / bytesPerSample);
+	assert(samplesPerFrame > 0);
+	return samplesPerFrame;
 }
 
 } /* namespace audio */

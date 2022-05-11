@@ -1,11 +1,14 @@
 /**
- * Represents WAV file data.
+ * Represents WAV file header.
  *
  * Supports only PCM format.
  * 
  * @see http://en.wikipedia.org/wiki/WAV
  * @see http://en.wikipedia.org/wiki/Linear_pulse-code_modulation
  * @see https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+ * @see https://audiocoding.ru/articles/2008-05-22-wav-file-structure/
+ * @see https://radioprog.ru/post/1025
+ * @see http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
  */
 
 #ifndef WAV_HEADER_H
@@ -31,7 +34,7 @@ struct WavHeader {
     unsigned int      subchunk1Size;  // Size of the fmt chunk
     unsigned short    audioFormat;    // Audio format 1=PCM (Other formats are unsupported)
     unsigned short    numOfChan;      // Number of channels 1=Mono, 2=Stereo
-    unsigned int			samplesPerSec;  // Sampling Frequency in Hz
+    unsigned int	  samplesPerSec;  // Sampling Frequency in Hz
     unsigned int      bytesPerSec;    // bytes per second
     unsigned short    blockAlign;     // 2=16-bit mono, 4=16-bit stereo
     unsigned short    bitsPerSample;  // Number of bits per sample

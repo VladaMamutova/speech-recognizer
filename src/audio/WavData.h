@@ -1,11 +1,5 @@
 /**
  * Represents WAV file data.
- *
- * Supports only PCM format.
- * 
- * @see http://en.wikipedia.org/wiki/WAV
- * @see http://en.wikipedia.org/wiki/Linear_pulse-code_modulation
- * @see https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
  */
 
 #ifndef WAV_DATA_H

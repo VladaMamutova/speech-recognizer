@@ -14,13 +14,13 @@ namespace audio {
 
 bool WavHeader::isValid()
 {
-	if (0 != strncmp(riff, "RIFF", sizeof(riff))
-		|| 0 != strncmp(wave, "WAVE", sizeof(wave))) {
+	if (strncmp(riff, "RIFF", sizeof(riff) != 0)
+		|| strncmp(wave, "WAVE", sizeof(wave) != 0)) {
 		fprintf(stderr, "Invalid RIFF/WAVE format\n");
 		return false;
 	}
 
-	if (1 != audioFormat) {
+	if (audioFormat != 1) {
 		fprintf(stderr, "Invalid WAV format: only PCM audio format is supported\n");
 		return false;
 	}
@@ -31,7 +31,7 @@ bool WavHeader::isValid()
 	}
 
 	unsigned long bitsPerChannel = bitsPerSample / numOfChan;
-	if (16 != bitsPerChannel) {
+	if (bitsPerChannel != 16) {
 		fprintf(stderr, "Invalid WAV format: only 16-bit per channel is supported\n");
 		return false;
 	}

@@ -59,6 +59,39 @@ WavData* WavData::readFromFile(const string& file)
 
 	// Read header
 	fs.read((char*)(&wavHeader), sizeof(WavHeader));
+
+    // cout << "chunkId = " << wavHeader.riff << endl;
+    // cout << "chunkSize = " << wavHeader.chunkSize << endl;
+    // cout << "format = " << wavHeader.wave << endl;
+    // cout << "subchunk1Id = " << wavHeader.fmt << endl;
+    // cout << "subchunk1Size = " << wavHeader.subchunk1Size << endl << endl;
+
+    // cout << "audioFormat = " << wavHeader.audioFormat << endl;
+    // cout << "numChannels = " << wavHeader.numOfChan << endl;
+    // cout << "sampleRate = " << wavHeader.samplesPerSec << endl;
+    // cout << "byteRate = " << wavHeader.bytesPerSec << endl << endl;
+
+    // cout << "blockAlign = " << wavHeader.blockAlign << endl;
+    // cout << "bitsPerSample = " << wavHeader.bitsPerSample << endl << endl;
+
+    // cout << "data = " << wavHeader.data << endl;
+    // cout << "subchunk2Size = " << wavHeader.subchunk2Size << endl << endl;
+
+	// cout << "data = " << wavHeader.data << endl;
+	// cout << "subchunk2Size = " << wavHeader.subchunk2Size << endl;
+
+	while (strncmp(wavHeader.data, "data", sizeof(wavHeader.data)) != 0)
+    {
+        // skip other chunks
+        fs.ignore(wavHeader.subchunk2Size);
+
+		fs.read((char*)(&wavHeader.data), sizeof(wavHeader.data));
+		fs.read(reinterpret_cast<char*>(&wavHeader.subchunk2Size), sizeof(wavHeader.subchunk2Size));
+		// cout << "Skipping a non 'data' chunk..." << endl;
+		// cout << "data = " << wavHeader.data << endl;
+	    // cout << "subchunk2Size = " << wavHeader.subchunk2Size << endl;
+    }
+
 	if (!wavHeader.isValid()) {
 		return NULL;
 	}

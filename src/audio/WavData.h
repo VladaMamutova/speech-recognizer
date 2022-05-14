@@ -37,6 +37,9 @@ public:
 	const double* getNormalizedData() const;
 
 	static WavData* readFromFile(const string& file);
+	static bool isValidExtension(const char*);
+
+	static const char* FILE_EXTENSION;
 
 private:
 	WavHeader header;

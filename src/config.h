@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
-#include <limits.h>
 
 /**
  * Build information
@@ -26,11 +25,6 @@
  * Raw audio data type
  */
 typedef int16_t raw_t;
-
-/**
- * Accuracy in the output of MFCC
- */
-const std::streamsize MFCC_PRECISION = 6;
 
 /**
  * Length of frame (ms)
@@ -60,10 +54,6 @@ const short ENTROPY_BINS = 75;
 const double ENTROPY_THRESHOLD = 0.1;
 
 // Helpers
-
-#define DEBUG_ENABLED true
-#define DEBUG(...)  \
-	do { if (DEBUG_ENABLED) { fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); } } while (0)
 
 #define UNUSED(expr) do { (void)(expr); } while (0)
 

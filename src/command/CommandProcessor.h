@@ -2,8 +2,10 @@
 #define COMMAND_PROCESSOR_H
 
 #include "../audio/SpeechProcessor.h"
+#include "../model/Storage.h"
 
 using namespace audio;
+using namespace model;
 
 namespace command {
 
@@ -26,6 +28,11 @@ private:
 	 * Speech processor
 	 */
 	SpeechProcessor* speechProcessor;
+
+	/**
+	 * Speech data storage
+	 */
+	Storage* storage;
 
 	/**
 	 * Checks whether input arguments are specified
@@ -53,9 +60,14 @@ private:
 	void printHelp();
 
 	/**
-	 * Display the MFCC coefficients retrieved from the input data
+	 * Display the MFCC features retrieved from the input data
 	 */
 	void displayMfcc();
+
+	/**
+	 * Display the MFCC features for the phoneme
+	 */
+	void printPhonemeFeatures(const char* phonemeLabel);
 };
 
 } /* namespace command */

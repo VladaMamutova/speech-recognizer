@@ -11,6 +11,8 @@ using namespace std;
 
 namespace audio {
 
+const char* WavData::FILE_EXTENSION = ".wav";
+
 WavData::WavData(WavHeader header) {
 	this->header = header;
 	this->rawData = NULL;
@@ -153,6 +155,12 @@ void WavData::readData(fstream& fs, const WavHeader& wavHeader, WavData& wavFile
 	wavFile.setMinVal(minValue);
 	wavFile.setMaxVal(maxValue);
 	wavFile.setNumberOfSamples(sampleNumber);
+}
+
+bool WavData::isValidExtension(const char* fileName)
+{
+	const char *dot = strrchr(fileName, '.');
+	return dot != NULL && strcmp(dot, WavData::FILE_EXTENSION) == 0;
 }
 
 } // namespace audio

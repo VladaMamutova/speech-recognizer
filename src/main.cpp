@@ -1,8 +1,5 @@
-#include <iostream>
-#include <stdlib.h>
 #include "command/CommandProcessor.h"
 
-using namespace std;
 using namespace command;
 
 /**

@@ -2,6 +2,10 @@
 #include <vector>
 #include "CommandProcessor.h"
 #include "Help.h"
+//#include "../model/PhonemeMap.h"
+#include <getopt.h>
+#include <unistd.h>
+#include <stdio.h>
 
 namespace command {
 
@@ -13,9 +17,10 @@ static struct option longOptions[] = {
 	{ "help", no_argument, 0, 'h' },
 
 	{ "mfcc", optional_argument, 0, 'm' },
+	{ "phoneme-features", optional_argument, 0, 'p' }
 };
 
-static const char* const shortOptions = "vhm:";
+static const char* const shortOptions = "vhmp:";
 
 void CommandProcessor::process()
 {
@@ -37,8 +42,11 @@ void CommandProcessor::process()
 				printHelp();
 				break;
 			case 'm':
-			  checkSpeechData();
-			  displayMfcc();
+				checkSpeechData();
+				displayMfcc();
+				break;
+			case 'p':
+				printPhonemeFeatures(optarg);
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
@@ -53,6 +61,7 @@ CommandProcessor::CommandProcessor(int argc, char** argv)
 	this->argc = argc;
 	this->argv = argv;
 	this->speechProcessor = NULL;
+	this->storage = new Storage();
 }
 
 CommandProcessor::~CommandProcessor()
@@ -61,6 +70,8 @@ CommandProcessor::~CommandProcessor()
 	{
 		delete this->speechProcessor;
 	}
+
+	delete this->storage;
 }
 
 void CommandProcessor::checkInputArguments()
@@ -110,6 +121,20 @@ void CommandProcessor::displayMfcc()
 {
 	speechProcessor->divideIntoFrames();
 	speechProcessor->printFramesMfcc();
+}
+
+void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
+{
+	const map<string, Phoneme*>* phonemes = storage->getPhonemeMap();
+
+	if (phonemes->count(phonemeLabel) == 0) {
+		cout << "Phoneme with label \"" << phonemeLabel << "\" not found." << endl;
+		return;
+	}
+
+	Phoneme* phoneme = phonemes->at(phonemeLabel);
+	cout << "\nPhoneme \"" << phonemeLabel << "\" is based on " << phoneme->getFeatureVectorSize() << " feature vectors: " << endl;
+	cout << *phoneme;
 }
 
 } /* namespace command */

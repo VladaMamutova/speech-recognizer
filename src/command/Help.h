@@ -1,8 +1,6 @@
 #ifndef HELP_H
 #define HELP_H
 
-#include <getopt.h>
-
 namespace command {
 
 #define EOL "\n"
@@ -26,7 +24,8 @@ static const char* const helpInfo =	EOL
 
 	EOL
 
-	"-m, --mfcc       Display the mfcc coefficients retrieved from the input data"
+	"-m, --mfcc              Display MFCCs retrieved from the input data"
+	"-p, --phoneme-features  Display phoneme features"
 
 	EOL;
 

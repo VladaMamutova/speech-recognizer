@@ -1,0 +1,48 @@
+#ifndef MFCC_FEATURES_H
+#define MFCC_FEATURES_H
+
+#include <iostream>
+
+using namespace std;
+
+namespace audio {
+
+class MfccFeatures {
+
+public:
+	/**
+	 * Accuracy in the output of MFCC
+	 */
+	static const streamsize MFCC_PRECISION;
+
+	/**
+	 * Field width of the output of MFCC
+	 */
+	static const streamsize MFCC_WIDTH;
+
+	/**
+	 * Delimeter in the output of MFCC
+	 */
+	static const string MFCC_DELIMETER;
+
+	/** 
+	 * Fixed size of mfcc data	
+	 */
+	static const size_t SIZE;
+
+	MfccFeatures();
+	MfccFeatures(double* data);
+	~MfccFeatures();
+
+	inline size_t getSize() const { return SIZE; } // inline for optimization
+	inline double* getData() const { return this->data; }
+
+	friend ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures);
+	friend istream& operator>>(istream& stream, MfccFeatures& mfccFeatures);
+private:
+	double*	data;
+};
+
+} /* namespace audio */
+
+#endif /* MFCC_FEATURES_H */

@@ -15,7 +15,7 @@ Frame::Frame(uint32_t id, uint32_t start, uint32_t end):
 
 Frame::~Frame() {
 	if (this->mfcc != NULL) {
-		delete[] this->mfcc;
+		delete this->mfcc;
 	}
 }
 
@@ -23,8 +23,9 @@ void Frame::init(const raw_t* source, const double* sourceNormalized, uint32_t f
 {
 	this->rms = Basic::rms(source, this->start, this->end);
 	this->entropy = Basic::entropy(sourceNormalized, this->start, this->end, ENTROPY_BINS, -1, 1);
-	this->mfcc = MFCC::transform(sourceNormalized, this->start, this->end, MFCC_SIZE, frequency,
+	double* mfcc = MFCC::transform(sourceNormalized, this->start, this->end, MfccFeatures::SIZE, frequency,
 		MFCC_FREQ_MIN, MFCC_FREQ_MAX);
+	this->mfcc = new MfccFeatures(mfcc);
 }
 
 uint32_t Frame::getId() const { return this->id; }
@@ -33,6 +34,6 @@ uint32_t Frame::getEnd() const { return this->end; }
 
 double Frame::getRms() const { return this->rms; }
 double Frame::getEntropy() const { return this->entropy; }
-double* Frame::getMfcc() const { return this->mfcc; }
+MfccFeatures* Frame::getMfcc() const { return this->mfcc; }
 
 } /* namespace audio */

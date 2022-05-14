@@ -19,7 +19,6 @@ namespace audio {
  */
 class SpeechProcessor {
 public:
-
 	SpeechProcessor(WavData* wavData);
 	~SpeechProcessor();
 

@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <vector>
-#include "../config.h"
 #include "../math/MFCC.h"
+#include "MfccFeatures.h"
 
 using namespace math;
 
@@ -30,7 +30,7 @@ public:
 
 	double getRms() const;
 	double getEntropy() const;
-	double* getMfcc() const;
+	MfccFeatures* getMfcc() const;
 
 private:
 	const uint32_t id;
@@ -39,7 +39,7 @@ private:
 
 	double rms;
 	double entropy;
-	double* mfcc;
+	MfccFeatures* mfcc;
 };
 
 } /* namespace audio */

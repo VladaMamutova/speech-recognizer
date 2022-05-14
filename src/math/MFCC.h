@@ -35,7 +35,7 @@ public:
 	static double* filter(const double* source, uint32_t start, uint32_t finish);
 
 	/**
-	 * Compute singnal's magnitude (short-time Fourier transform with Hamming window)
+	 * Compute signal's magnitude (short-time Fourier transform with Hamming window)
 	 *
 	 * @see http://en.wikipedia.org/wiki/Fourier_transform
 	 * @see http://en.wikipedia.org/wiki/Discrete-time_Fourier_transform
@@ -48,7 +48,7 @@ public:
 	static double* fourierTransform(const double* source, uint32_t length, bool useWindow);
 
 	/**
-	 * Compute singnal's magnitude (short-time Fourier transform with Hamming window)
+	 * Compute signal's magnitude (short-time Fourier transform with Hamming window)
 	 *
 	 * @see http://www.drdobbs.com/cpp/a-simple-and-efficient-fft-implementatio/199500857
 	 * @see http://rosettacode.org/wiki/Fast_Fourier_transform#C.2B.2B

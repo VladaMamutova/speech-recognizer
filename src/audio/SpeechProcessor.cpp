@@ -23,11 +23,11 @@ SpeechProcessor::SpeechProcessor(WavData* wavData)
 
 SpeechProcessor::~SpeechProcessor()
 {
-	if (NULL != this->frames) {
-		vector<Frame*>::const_iterator iter;
+	if (this->frames != NULL) {
+		vector<Frame*>::const_iterator frame;
 
-		for (iter = this->frames->begin(); iter != this->frames->end(); ++iter) {
-			delete *iter;
+		for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {
+			delete *frame;
 		}
 
 		delete this->frames;
@@ -70,19 +70,8 @@ vector<Frame*>* SpeechProcessor::getFrames() { return this->frames; }
 void SpeechProcessor::printFramesMfcc()
 { 
 	vector<Frame*>::const_iterator frame;
-	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {
-		cout << "[";
-
-		double* mfcc = (*frame)->getMfcc();
-		for (size_t i = 0; i < MFCC_SIZE; i++) {
-			cout << mfcc[i];
-
-			if (i < MFCC_SIZE - 1) {
-				cout << ", ";
-			}
-		}
-
-	  cout << "]" << endl;
+	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {	
+		cout << *(*frame)->getMfcc() << endl;
 	}
 }
 

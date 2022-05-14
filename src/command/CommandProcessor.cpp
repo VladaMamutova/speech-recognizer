@@ -60,15 +60,15 @@ CommandProcessor::CommandProcessor(int argc, char** argv)
 {
 	this->argc = argc;
 	this->argv = argv;
-	this->speechProcessor = NULL;
+	this->audioProcessor = NULL;
 	this->storage = new Storage();
 }
 
 CommandProcessor::~CommandProcessor()
 {
-	if (this->speechProcessor != NULL)
+	if (this->audioProcessor != NULL)
 	{
-		delete this->speechProcessor;
+		delete this->audioProcessor;
 	}
 
 	delete this->storage;
@@ -94,12 +94,12 @@ void CommandProcessor::readSpeechData()
 		exit(EXIT_FAILURE);
 	}
 
-	speechProcessor = new SpeechProcessor(wavData);
+	audioProcessor = new AudioProcessor(wavData);
 }
 
 void CommandProcessor::checkSpeechData()
 {
-	if (speechProcessor == NULL || speechProcessor->getWavData() == NULL)
+	if (audioProcessor == NULL || audioProcessor->getWavData() == NULL)
 	{
 		cout << "Error: No input data specified." << endl;
 		cout << "Please take a look on the help info for details:" << endl;
@@ -119,8 +119,8 @@ void CommandProcessor::printHelp()
 
 void CommandProcessor::displayMfcc()
 {
-	speechProcessor->divideIntoFrames();
-	speechProcessor->printFramesMfcc();
+	audioProcessor->divideIntoFrames();
+	audioProcessor->printFramesMfcc();
 }
 
 void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)

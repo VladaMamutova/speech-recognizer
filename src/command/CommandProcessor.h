@@ -1,7 +1,7 @@
 #ifndef COMMAND_PROCESSOR_H
 #define COMMAND_PROCESSOR_H
 
-#include "../audio/SpeechProcessor.h"
+#include "../audio/AudioProcessor.h"
 #include "../model/Storage.h"
 
 using namespace audio;
@@ -25,9 +25,9 @@ private:
 	char** argv;
 
 	/**
-	 * Speech processor
+	 * Audio processor
 	 */
-	SpeechProcessor* speechProcessor;
+	AudioProcessor* audioProcessor;
 
 	/**
 	 * Speech data storage

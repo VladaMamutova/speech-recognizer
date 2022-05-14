@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include "PhonemeMap.h"
 #include "Storage.h"
-#include "../audio/SpeechProcessor.h"
+#include "../audio/AudioProcessor.h"
 #include "../math/Basic.h"
 
 
@@ -113,7 +113,7 @@ istream& operator>>(istream& stream, PhonemeMap& phonemeMap)
 			exit(EXIT_FAILURE);
 		}
 
-		cout << "Read phoneme \"" << label << "\"" << endl;
+		cout << "Read phoneme [" << label << "]" << endl;
 
 		size_t featureVectorSize;
 		if (!(stream >> featureVectorSize)) {
@@ -157,10 +157,10 @@ PhonemeMap* PhonemeMap::loadFromDirectory(const char* directoryName)
 				label = label.substr(0, label.find_last_of('.'));
 				Phoneme* phoneme = new Phoneme(label);
 
-				SpeechProcessor *speechProcessor = new SpeechProcessor(wavData);
-				speechProcessor->divideIntoFrames();
+				AudioProcessor *audioProcessor = new AudioProcessor(wavData);
+				audioProcessor->divideIntoFrames();
 
-				vector<Frame*>* frames = speechProcessor->getFrames();
+				vector<Frame*>* frames = audioProcessor->getFrames();
 				vector<Frame*>::const_iterator frame;
 				for (frame = frames->begin(); frame != frames->end(); ++frame)
 				{

@@ -7,21 +7,21 @@
 #include <iostream>
 #include <iterator>
 #include <string>
-#include "SpeechProcessor.h"
+#include "AudioProcessor.h"
 #include "Frame.h"
 
 using namespace std;
 
 namespace audio {
 
-SpeechProcessor::SpeechProcessor(WavData* wavData)
+AudioProcessor::AudioProcessor(WavData* wavData)
 {
 	this->wavData = wavData;
 	this->frames = NULL;
 	this->samplesPerFrame = 0;
 }
 
-SpeechProcessor::~SpeechProcessor()
+AudioProcessor::~AudioProcessor()
 {
 	if (this->frames != NULL) {
 		vector<Frame*>::const_iterator frame;
@@ -34,9 +34,9 @@ SpeechProcessor::~SpeechProcessor()
 	}
 }
 
-const WavData* SpeechProcessor::getWavData() const { return this->wavData; }
+const WavData* AudioProcessor::getWavData() const { return this->wavData; }
 
-void SpeechProcessor::divideIntoFrames()
+void AudioProcessor::divideIntoFrames()
 {
   if (this->frames != NULL) return;
 
@@ -65,9 +65,9 @@ void SpeechProcessor::divideIntoFrames()
 	}
 }
 
-vector<Frame*>* SpeechProcessor::getFrames() { return this->frames; }
+vector<Frame*>* AudioProcessor::getFrames() { return this->frames; }
 
-void SpeechProcessor::printFramesMfcc()
+void AudioProcessor::printFramesMfcc()
 { 
 	vector<Frame*>::const_iterator frame;
 	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {	
@@ -75,7 +75,7 @@ void SpeechProcessor::printFramesMfcc()
 	}
 }
 
-uint32_t SpeechProcessor::calculateSamplesPerFrame()
+uint32_t AudioProcessor::calculateSamplesPerFrame()
 {
 	uint32_t bytesPerFrame = static_cast<uint32_t>(
 		this->wavData->getHeader().bytesPerSec * FRAME_LENGTH / 1000.0);

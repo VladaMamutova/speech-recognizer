@@ -1,5 +1,5 @@
-#ifndef SPEECH_PROCESSOR_H
-#define SPEECH_PROCESSOR_H
+#ifndef AUDIO_PROCESSOR_H
+#define AUDIO_PROCESSOR_H
 
 #include <vector>
 #include <map>
@@ -14,13 +14,13 @@ using namespace std;
 namespace audio {
 
 /**
- * Speech Processor is a mediator which splits raw data into frames and words
- * and keeps relations between these objects
+ * AudioProcessor is a mediator which splits raw data into frames,
+ * calculates their MFCC features, keeps relations between these objects.
  */
-class SpeechProcessor {
+class AudioProcessor {
 public:
-	SpeechProcessor(WavData* wavData);
-	~SpeechProcessor();
+	AudioProcessor(WavData* wavData);
+	~AudioProcessor();
 
   const WavData* getWavData() const;
 
@@ -39,4 +39,4 @@ private:
 
 } /* namespace audio */
 
-#endif /* SPEECH_PROCESSOR_H */
+#endif /* AUDIO_PROCESSOR_H */

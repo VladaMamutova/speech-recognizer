@@ -13,6 +13,8 @@ namespace model {
 const string PhonemeMap::UNKNOWN_VALUE = "?";
 const string PHONEME_MAP = "PHONEME_MAP";
 const double MFCC_WEIGHTS[] = { 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 };
+//const double MFCC_WEIGHTS[] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+//const double MFCC_WEIGHTS[] = { 1.0, 1.0, 0.9, 0.9, 0.8, 0.8, 0.7, 0.7, 0.6, 0.6, 0.5, 0.5 };
 
 const map<string, Phoneme*>* PhonemeMap::getPhonemes() const
 {
@@ -65,6 +67,8 @@ string PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
 	map<string, Phoneme*>::const_iterator phoneme;
 	for (phoneme = this->phonemes->begin(); phoneme != this->phonemes->end(); phoneme++)
 	{
+		//cout << "\t" << phoneme->first << ": ";
+
 		vector<MfccFeatures*>::const_iterator features;
 		for (features = phoneme->second->getFeatureVector()->begin();
 			features != phoneme->second->getFeatureVector()->end();
@@ -79,7 +83,9 @@ string PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
 				minDistance = distance;
 				label = phoneme->first;
 			}
+			//cout << distance << " ";
 		}
+		//cout << endl;
 	}
 
 	return label;
@@ -93,7 +99,7 @@ ostream& operator<<(ostream& stream, const PhonemeMap& phonemeMap)
 	for (phoneme = phonemeMap.phonemes->begin(); phoneme != phonemeMap.phonemes->end(); phoneme++)
 	{
 		stream << phoneme->first << " " << phoneme->second->getFeatureVectorSize() << endl;
-		stream << *phoneme->second;
+		stream << *phoneme->second->getFeatureVector();
 	}
 
 	return stream;
@@ -113,7 +119,7 @@ istream& operator>>(istream& stream, PhonemeMap& phonemeMap)
 			exit(EXIT_FAILURE);
 		}
 
-		cout << "Read phoneme [" << label << "]" << endl;
+		//cout << "Read phoneme [" << label << "]" << endl;
 
 		size_t featureVectorSize;
 		if (!(stream >> featureVectorSize)) {
@@ -155,18 +161,11 @@ PhonemeMap* PhonemeMap::loadFromDirectory(const char* directoryName)
 			if (wavData != NULL) {
 				string label = phonemeFile->d_name;
 				label = label.substr(0, label.find_last_of('.'));
-				Phoneme* phoneme = new Phoneme(label);
 
 				AudioProcessor *audioProcessor = new AudioProcessor(wavData);
 				audioProcessor->divideIntoFrames();
 
-				vector<Frame*>* frames = audioProcessor->getFrames();
-				vector<Frame*>::const_iterator frame;
-				for (frame = frames->begin(); frame != frames->end(); ++frame)
-				{
-					phoneme->addFeatures((*frame)->getMfcc());
-					cout << *(*frame)->getMfcc() << endl;
-				}
+				Phoneme* phoneme = new Phoneme(label, audioProcessor->getFrameMfccs());
 				phonemeMap->addPhoneme(phoneme);
 			}
 		}

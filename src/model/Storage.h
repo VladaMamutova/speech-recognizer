@@ -18,7 +18,7 @@ public:
 	Storage();
 	~Storage();
 
-	const map<string, Phoneme*>* getPhonemeMap();
+	const PhonemeMap* getPhonemeMap();
 
 	/**
 	 * Load a code book from storage file

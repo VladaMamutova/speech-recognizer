@@ -21,13 +21,13 @@ Storage::~Storage()
 	}
 }
 
-const map<string, Phoneme*>* Storage::getPhonemeMap()
+const PhonemeMap* Storage::getPhonemeMap()
 {
 	if (phonemeMap == NULL) {
 		loadPhonemes();
 	}
 
-	return phonemeMap->getPhonemes();
+	return phonemeMap;
 }
 
 bool Storage::loadPhonemes()

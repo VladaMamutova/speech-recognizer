@@ -6,7 +6,7 @@ namespace audio {
 
 const streamsize MfccFeatures::MFCC_PRECISION = 6;
 const streamsize MfccFeatures::MFCC_WIDTH = MFCC_PRECISION + 4; // 1 ('-') + 2 (numbers) + 1 ('.')
-const string MfccFeatures::MFCC_DELIMETER = ", ";
+const string MfccFeatures::MFCC_DELIMETER = " ";
 const size_t MfccFeatures::SIZE = MFCC_SIZE;
 
 MfccFeatures::MfccFeatures()
@@ -26,7 +26,8 @@ MfccFeatures::~MfccFeatures()
 	}
 }
 
-ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures) {
+ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures)
+{
 	stream.precision(MfccFeatures::MFCC_PRECISION);
 	stream.setf(std::ios_base::fixed, std::ios_base::floatfield);
 
@@ -34,10 +35,19 @@ ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures) {
 		stream << setw(MfccFeatures::MFCC_WIDTH) << mfccFeatures.data[i];
 
 		if (i < mfccFeatures.getSize() - 1) {
-			stream << " ";
+			stream << MfccFeatures::MFCC_DELIMETER;
 		}
 	}
 
+	return stream;
+}
+
+ostream& operator<<(ostream& stream, const vector<MfccFeatures*>& featureVector)
+{
+	vector<MfccFeatures*>::const_iterator features;
+	for (features = featureVector.begin(); features != featureVector.end(); features++) {
+		stream << **features << endl;
+	}
 	return stream;
 }
 

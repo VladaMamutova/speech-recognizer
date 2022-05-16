@@ -1,9 +1,6 @@
 #ifndef PHONEME_H
 #define PHONEME_H
 
-#include <map>
-#include <vector>
-#include <cstring>
 #include "../audio/MfccFeatures.h"
 
 using namespace std;
@@ -24,7 +21,6 @@ public:
 	vector<MfccFeatures*>* getFeatureVector();
 	size_t getFeatureVectorSize();
 	void addFeatures(MfccFeatures* features);
-	friend ostream& operator<<(ostream& stream, const Phoneme& phoneme);
 
 private:
 	string label;

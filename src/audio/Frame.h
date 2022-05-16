@@ -2,7 +2,6 @@
 #define FRAME_H
 
 #include <stdint.h>
-#include <vector>
 #include "../math/MFCC.h"
 #include "MfccFeatures.h"
 

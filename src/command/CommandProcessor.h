@@ -3,6 +3,7 @@
 
 #include "../audio/AudioProcessor.h"
 #include "../model/Storage.h"
+#include "../model/SpeechProcessor.h"
 
 using namespace audio;
 using namespace model;
@@ -28,6 +29,11 @@ private:
 	 * Audio processor
 	 */
 	AudioProcessor* audioProcessor;
+
+	/**
+	 * Speech processor
+	 */
+	SpeechProcessor* speechProcessor;
 
 	/**
 	 * Speech data storage
@@ -68,6 +74,11 @@ private:
 	 * Display the MFCC features for the phoneme
 	 */
 	void printPhonemeFeatures(const char* phonemeLabel);
+
+	/**
+	 * Predict phoneme labels for the input data
+	 */
+	void predictLabels();
 };
 
 } /* namespace command */

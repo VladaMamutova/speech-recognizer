@@ -16,11 +16,15 @@ static struct option longOptions[] = {
 	{ "version", no_argument, 0, 'v' },
 	{ "help", no_argument, 0, 'h' },
 
-	{ "mfcc", optional_argument, 0, 'm' },
-	{ "phoneme-features", optional_argument, 0, 'p' }
+	{ "mfcc", no_argument, 0, 'm' },
+	{ "phoneme-features", required_argument, 0, 'p' },
+
+	{ "predict-labels", no_argument, 0, 'l' },
+
+	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhmp:";
+static const char* const shortOptions = "vhmp:l";
 
 void CommandProcessor::process()
 {
@@ -48,6 +52,10 @@ void CommandProcessor::process()
 			case 'p':
 				printPhonemeFeatures(optarg);
 				break;
+			case 'l':
+				checkSpeechData();
+				predictLabels();
+				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
 				processed = true;
@@ -62,6 +70,7 @@ CommandProcessor::CommandProcessor(int argc, char** argv)
 	this->argv = argv;
 	this->audioProcessor = NULL;
 	this->storage = new Storage();
+	this->speechProcessor = new SpeechProcessor(storage);
 }
 
 CommandProcessor::~CommandProcessor()
@@ -120,12 +129,12 @@ void CommandProcessor::printHelp()
 void CommandProcessor::displayMfcc()
 {
 	audioProcessor->divideIntoFrames();
-	audioProcessor->printFramesMfcc();
+	cout << *audioProcessor->getFrameMfccs();
 }
 
 void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 {
-	const map<string, Phoneme*>* phonemes = storage->getPhonemeMap();
+	const map<string, Phoneme*>* phonemes = storage->getPhonemeMap()->getPhonemes();
 
 	if (phonemes->count(phonemeLabel) == 0) {
 		cout << "Phoneme with label \"" << phonemeLabel << "\" not found." << endl;
@@ -134,7 +143,13 @@ void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 
 	Phoneme* phoneme = phonemes->at(phonemeLabel);
 	cout << "\nPhoneme \"" << phonemeLabel << "\" is based on " << phoneme->getFeatureVectorSize() << " feature vectors: " << endl;
-	cout << *phoneme;
+	cout << *phoneme->getFeatureVector();
+}
+
+void CommandProcessor::predictLabels()
+{
+	audioProcessor->divideIntoFrames();
+	speechProcessor->findLabelsByFeatures(audioProcessor->getFrameMfccs());
 }
 
 } /* namespace command */

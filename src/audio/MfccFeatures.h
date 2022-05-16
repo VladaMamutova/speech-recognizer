@@ -2,6 +2,7 @@
 #define MFCC_FEATURES_H
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ public:
 	inline double* getData() const { return this->data; }
 
 	friend ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures);
+	friend ostream& operator<<(ostream& stream, const vector<MfccFeatures*>& featureVector);
 	friend istream& operator>>(istream& stream, MfccFeatures& mfccFeatures);
 private:
 	double*	data;

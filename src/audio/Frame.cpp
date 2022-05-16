@@ -1,5 +1,3 @@
-#include <cmath>
-#include <stdlib.h>
 #include "Frame.h"
 #include "../math/Basic.h"
 

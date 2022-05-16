@@ -67,12 +67,16 @@ void AudioProcessor::divideIntoFrames()
 
 vector<Frame*>* AudioProcessor::getFrames() { return this->frames; }
 
-void AudioProcessor::printFramesMfcc()
-{ 
+vector<MfccFeatures*>* AudioProcessor::getFrameMfccs()
+{
+	vector<MfccFeatures*>* frameMfccs = new vector<MfccFeatures*>();
+
 	vector<Frame*>::const_iterator frame;
 	for (frame = this->frames->begin(); frame != this->frames->end(); ++frame) {	
-		cout << *(*frame)->getMfcc() << endl;
+		frameMfccs->push_back((*frame)->getMfcc());
 	}
+
+	return frameMfccs;
 }
 
 uint32_t AudioProcessor::calculateSamplesPerFrame()

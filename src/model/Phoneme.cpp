@@ -31,14 +31,4 @@ size_t Phoneme::getFeatureVectorSize() { return featureVector->size(); }
 
 void Phoneme::addFeatures(MfccFeatures* entry) { featureVector->push_back(entry); }
 
-ostream& operator<<(ostream& stream, const Phoneme& phoneme)
-{
-	vector<MfccFeatures*>::iterator features;
-	for (features = phoneme.featureVector->begin(); features != phoneme.featureVector->end(); features++) {
-		stream << **features << endl;
-	}
-
-	return stream;
-}
-
 } /* namespace model */

@@ -1,11 +1,6 @@
 #ifndef AUDIO_PROCESSOR_H
 #define AUDIO_PROCESSOR_H
 
-#include <vector>
-#include <map>
-#include <utility>
-#include <memory>
-#include "../config.h"
 #include "WavData.h"
 #include "Frame.h"
 
@@ -26,7 +21,7 @@ public:
 
   void divideIntoFrames();
   vector<Frame*>* getFrames();
-  void printFramesMfcc();
+  vector<MfccFeatures*>* getFrameMfccs();
 
 private:
 	WavData* wavData;

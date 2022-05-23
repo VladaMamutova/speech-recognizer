@@ -13,9 +13,9 @@ SpeechProcessor::~SpeechProcessor()
 	// Storage is an independent object, SpeechProcessor doesn't own it.
 }
 
-const vector<string>* SpeechProcessor::findLabelsByFeatures(const vector<MfccFeatures*>* mfccFeatures)
+const vector<PhonemePrediction*>* SpeechProcessor::findLabelsByFeatures(const vector<MfccFeatures*>* mfccFeatures)
 {
-	vector<string>* labels = new vector<string>();
+	vector<PhonemePrediction*>* predictions = new vector<PhonemePrediction*>();
 	const PhonemeMap* phonemeMap = storage->getPhonemeMap();
 
 	cout << "Labels:" << endl;
@@ -23,16 +23,16 @@ const vector<string>* SpeechProcessor::findLabelsByFeatures(const vector<MfccFea
 	vector<MfccFeatures*>::const_iterator features;
 	int i = 0;
 	for (features = mfccFeatures->begin(); features != mfccFeatures->end(); ++features) {
-		MfccFeatures* currentMfccFeatures = *features;
-		string label = phonemeMap->findLabelByFeatures(currentMfccFeatures);
+		MfccFeatures* currentFeature = *features;
+		PhonemePrediction* prediction = phonemeMap->findLabelByFeatures(currentFeature);
 
-		labels->push_back(label);
+		predictions->push_back(prediction);
 
-		cout << label << ": " << *currentMfccFeatures << endl;
+		cout << i << ": " << *prediction << endl;
 		i++;
 	}
 
-	return labels;
+	return predictions;
 }
 
 } /* namespace model */

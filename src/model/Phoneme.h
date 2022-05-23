@@ -30,4 +30,3 @@ private:
 } /* namespace model */
 
 #endif /* PHONEME_H */
-

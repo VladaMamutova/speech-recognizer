@@ -24,10 +24,14 @@ static const char* const helpInfo =	EOL
 
 	EOL
 
-	"-m, --mfcc              Display MFCCs retrieved from the input data"
-	"-p, --phoneme-features  Display phoneme features"
+	"-m, --mfcc              Display MFCCs retrieved from the input file" EOL
+	"-f, --phoneme-features	 Display phoneme features" EOL
 
-	EOL;
+	EOL
+
+	"-p, --predict-labels	 Predict phonemes on frames from the input file" EOL
+
+	;
 
 } /* namespace command */
 

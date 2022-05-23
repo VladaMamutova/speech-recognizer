@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstring>
 #include "Phoneme.h"
+#include "PhonemePrediction.h"
 
 using namespace std;
 using namespace audio;
@@ -29,7 +30,7 @@ public:
 	void addPhoneme(Phoneme *phoneme);
 	void removePhoneme(string phonemeLabel);
 
-	string findLabelByFeatures(MfccFeatures* mfccFeatures) const;
+	PhonemePrediction* findLabelByFeatures(MfccFeatures* mfccFeatures) const;
 
 	friend ostream& operator<<(ostream& stream, const PhonemeMap& phonemeMap);
 	friend istream& operator>>(istream& stream, PhonemeMap& phonemeMap);

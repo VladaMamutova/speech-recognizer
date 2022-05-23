@@ -17,14 +17,14 @@ static struct option longOptions[] = {
 	{ "help", no_argument, 0, 'h' },
 
 	{ "mfcc", no_argument, 0, 'm' },
-	{ "phoneme-features", required_argument, 0, 'p' },
+	{ "phoneme-features", required_argument, 0, 'f' },
 
-	{ "predict-labels", no_argument, 0, 'l' },
+	{ "predict-labels", no_argument, 0, 'p' },
 
 	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhmp:l";
+static const char* const shortOptions = "vhmf:p";
 
 void CommandProcessor::process()
 {
@@ -49,10 +49,10 @@ void CommandProcessor::process()
 				checkSpeechData();
 				displayMfcc();
 				break;
-			case 'p':
+			case 'f':
 				printPhonemeFeatures(optarg);
 				break;
-			case 'l':
+			case 'p':
 				checkSpeechData();
 				predictLabels();
 				break;

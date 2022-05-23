@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <math.h>
-#include <cstring>
 #include <dirent.h>
 #include "PhonemeMap.h"
 #include "Storage.h"
@@ -13,8 +12,6 @@ namespace model {
 const string PhonemeMap::UNKNOWN_VALUE = "?";
 const string PHONEME_MAP = "PHONEME_MAP";
 const double MFCC_WEIGHTS[] = { 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 };
-//const double MFCC_WEIGHTS[] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
-//const double MFCC_WEIGHTS[] = { 1.0, 1.0, 0.9, 0.9, 0.8, 0.8, 0.7, 0.7, 0.6, 0.6, 0.5, 0.5 };
 
 const map<string, Phoneme*>* PhonemeMap::getPhonemes() const
 {
@@ -56,10 +53,12 @@ void PhonemeMap::removePhoneme(string label)
 	this->phonemes->erase(label);
 }
 
-string PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
+PhonemePrediction* PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
 {
 	double minDistance = -1;
 	string label = UNKNOWN_VALUE;
+
+	PhonemePrediction* prediction = new PhonemePrediction();
 
 	// The first values in a MFCC vector are more meaningful than
 	// the last ones. That's why we use the MFCC_WEIGHTS.
@@ -85,10 +84,11 @@ string PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
 			}
 			//cout << distance << " ";
 		}
+		prediction->addPrediction(phoneme->first, minDistance);
 		//cout << endl;
 	}
 
-	return label;
+	return prediction;
 }
 
 ostream& operator<<(ostream& stream, const PhonemeMap& phonemeMap)

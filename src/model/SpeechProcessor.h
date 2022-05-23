@@ -13,7 +13,7 @@ public:
 	SpeechProcessor(Storage* storage);
 	~SpeechProcessor();
 
-    const vector<string>* findLabelsByFeatures(const vector<MfccFeatures*>* features);
+    const vector<PhonemePrediction*>* findLabelsByFeatures(const vector<MfccFeatures*>* features);
 
 private:
 	Storage* storage;

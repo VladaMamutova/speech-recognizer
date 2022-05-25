@@ -2,7 +2,7 @@
 #include <vector>
 #include "CommandProcessor.h"
 #include "Help.h"
-//#include "../model/PhonemeMap.h"
+#include "../model/TermFrequency.h"
 #include <getopt.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -20,11 +20,12 @@ static struct option longOptions[] = {
 	{ "phoneme-features", required_argument, 0, 'f' },
 
 	{ "predict-labels", no_argument, 0, 'p' },
+	{ "term-frequency", required_argument, 0, 't' },
 
 	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhmf:p";
+static const char* const shortOptions = "vhmf:pt:";
 
 void CommandProcessor::process()
 {
@@ -55,6 +56,9 @@ void CommandProcessor::process()
 			case 'p':
 				checkSpeechData();
 				predictLabels();
+				break;
+			case 't':
+				TermFrequency::createFromDirectory(optarg);
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;

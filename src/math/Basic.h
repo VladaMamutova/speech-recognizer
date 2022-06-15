@@ -1,6 +1,7 @@
 #ifndef BASIC_H
 #define BASIC_H
 
+#include <vector>
 #include <stdint.h>
 #include "../config.h"
 
@@ -29,6 +30,10 @@ public:
 
 	static double euclideanDistance(const double* a, const double* b, size_t size);
 	static double euclideanDistanceWithWeights(const double* a, const double* b, const double* weights, size_t size);
+
+	static double spearmanCorrelation(const vector<double> &x, const vector<double> &y);
+	static vector<double> rankify(const vector<double> &values);
+	//static double DwtDistance(const std::vector<double*> &actual, const std::vector< std::vector<double>> &training);
 };
 
 } /* namespace math */

@@ -84,4 +84,74 @@ double Basic::euclideanDistanceWithWeights(const double* a, const double* b, con
 	return sqrt(distance);
 }
 
+vector<double> Basic::rankify(const vector<double> &values) 
+{
+	int N = values.size();
+	vector<double> ranks(N);
+	
+	for(int i = 0; i < N; i++)
+	{
+		int r = 1, s = 1;
+		for(int j = 0; j < i; j++) 
+		{
+			if (values[j] < values[i] ) r++;
+			if (values[j] == values[i] ) s++;
+		}
+		for (int j = i+1; j < N; j++) 
+		{
+			if (values[j] < values[i] ) r++;
+			if (values[j] == values[i] ) s++;
+		}
+		ranks[i] = r + (s-1) * 0.5;		
+	}
+
+	return ranks;
+}
+
+
+double Basic::spearmanCorrelation(const vector<double> &x, const vector<double> &y)
+{
+	vector<double> xRanks = rankify(x);
+	vector<double> yRanks = rankify(y);
+
+	int n = x.size();
+	double xSum = 0, ySum = 0, xySum = 0, x2Sum = 0, y2Sum = 0;
+	for (int i = 0; i < n; i++)
+	{
+		xSum = xSum + xRanks[i];
+		ySum = ySum + yRanks[i];
+		xySum = xySum + xRanks[i] * yRanks[i];
+		x2Sum = x2Sum + xRanks[i] * xRanks[i];
+		y2Sum = y2Sum + yRanks[i] * yRanks[i];
+	}
+	double p1 = n * xySum -xSum * ySum;
+	double p2 = n * x2Sum -xSum * xSum;
+	double p3 = n * y2Sum -ySum * ySum;
+	double spearman = p1 / sqrt(p2 * p3);
+	return spearman;
+}
+
+//double Basic::DwtDistance(const std::vector<double*> &actual, const std::vector<std::vector<double>> &training)
+//{
+	// int m = actual.size();
+    // int n = training.size();
+
+    // double cost[m][n];
+
+    // cost[0][0] = euclideanDistance(actual[0], training[0]);
+
+    // for(int i = 1; i < m; i++)
+    //         cost[i][0] = cost[i-1][0] + Euclidean::Euclidean_distance(actual[i], training[0]);
+    // for(int j = 1; j < n; j++)
+    //         cost[0][j] = cost[0][j-1] + Euclidean::Euclidean_distance(actual[0], training[j]);
+
+    // for(int i = 1; i < m; i++)
+    //         for(int j = 1; j < n; j++)
+    //             cost[i][j] = std::min(cost[i-1][j], std::min(cost[i][j-1], cost[i-1][j-1])) 
+    //                 + Euclidean::Euclidean_distance(actual[i],training[j]);
+    
+    // return cost[m-1][n-1];
+
+//}
+
 } /* namespace math */

@@ -30,7 +30,11 @@ static const char* const helpInfo =	EOL
 	EOL
 
 	"-p, --predict-labels	 Predict phonemes on frames from the input file" EOL
+	"-t, --term-frequency    Calculate the term frequency (frequency of phoneme pairs) for all texts from the input folder" EOL
+	
+	EOL
 
+	"-l, --lsa-train         Calculate the correlation between pairs of phonemes of all texts from the input folder" EOL
 	;
 
 } /* namespace command */

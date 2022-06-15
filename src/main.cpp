@@ -5,8 +5,8 @@ using namespace command;
 /**
  * Entry point
  */
-int main(int argc, char** argv) {
-
+int main(int argc, char** argv)
+{
 	CommandProcessor processor(argc, argv);
 	processor.process();
 

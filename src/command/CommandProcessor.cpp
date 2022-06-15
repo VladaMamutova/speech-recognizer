@@ -2,7 +2,7 @@
 #include <vector>
 #include "CommandProcessor.h"
 #include "Help.h"
-#include "../model/TermFrequency.h"
+#include "../model/LsaTrainer.h"
 #include <getopt.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -22,10 +22,12 @@ static struct option longOptions[] = {
 	{ "predict-labels", no_argument, 0, 'p' },
 	{ "term-frequency", required_argument, 0, 't' },
 
+	{ "lsa-train", required_argument, 0, 'l' },
+
 	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhmf:pt:";
+static const char* const shortOptions = "vhmf:pt:l:";
 
 void CommandProcessor::process()
 {
@@ -34,7 +36,9 @@ void CommandProcessor::process()
 
 	bool processed = false;
 	int option;
-	do {
+	LsaTrainer *lsaTrainer;
+	do
+	{
 		option = getopt_long(argc, argv, shortOptions, longOptions, NULL);
 		switch (option) {
 			case -1: // The end of the options.
@@ -60,6 +64,10 @@ void CommandProcessor::process()
 			case 't':
 				TermFrequency::createFromDirectory(optarg);
 				break;
+			case 'l':
+				lsaTrainer = new LsaTrainer(optarg);
+				lsaTrainer->train();
+				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
 				processed = true;
@@ -79,8 +87,7 @@ CommandProcessor::CommandProcessor(int argc, char** argv)
 
 CommandProcessor::~CommandProcessor()
 {
-	if (this->audioProcessor != NULL)
-	{
+	if (this->audioProcessor != NULL) {
 		delete this->audioProcessor;
 	}
 
@@ -90,8 +97,7 @@ CommandProcessor::~CommandProcessor()
 void CommandProcessor::checkInputArguments()
 {
 	if (argc <= 1) {
-		cout << "Error: No input parameters specified." << endl;
-		cout << "Please take a look on the help info for details:" << endl;
+		printVersion();
 		printHelp();
 		exit(EXIT_FAILURE);
 	}
@@ -112,8 +118,7 @@ void CommandProcessor::readSpeechData()
 
 void CommandProcessor::checkSpeechData()
 {
-	if (audioProcessor == NULL || audioProcessor->getWavData() == NULL)
-	{
+	if (audioProcessor == NULL || audioProcessor->getWavData() == NULL) {
 		cout << "Error: No input data specified." << endl;
 		cout << "Please take a look on the help info for details:" << endl;
 		exit(EXIT_FAILURE);

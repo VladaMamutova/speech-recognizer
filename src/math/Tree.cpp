@@ -110,5 +110,6 @@ void Tree<KEY_TYPE, VALUE_TYPE>::deleteNode(Node *node)
 }
 
 template class Tree<string, double>;
+template class Tree<wstring, double>;
 
 } /* namespace math */

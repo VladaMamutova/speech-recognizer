@@ -29,12 +29,14 @@ typedef int16_t raw_t;
 /**
  * Length of frame (ms)
  */
-const uint32_t FRAME_LENGTH = 50;
+//const uint32_t FRAME_LENGTH = 50;
+const uint32_t FRAME_LENGTH = 25;
 
 /**
  * Percentage of overlap for frames (0 <= x < 1)
  */
-const double FRAME_OVERLAP = 0.5;
+//const double FRAME_OVERLAP = 0.5;
+const double FRAME_OVERLAP = 0.4;
 
 /**
  * Amount of MFCC coefficients
@@ -52,6 +54,11 @@ const short MFCC_FREQ_MAX = 4000;
  */
 const short ENTROPY_BINS = 75;
 const double ENTROPY_THRESHOLD = 0.1;
+
+/**
+ * Percentage of singular values
+ */
+const double K = 0.05;
 
 // Helpers
 

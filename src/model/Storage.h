@@ -18,17 +18,21 @@ public:
 	Storage();
 	~Storage();
 
-	const PhonemeMap* getPhonemeMap();
+	const PhonemeMap* fetchPhonemeMap();
+	const PhonemeMap* fetchPhonemePairMap();
+
+	void updatePhonemes(const char* sourceDirectory);
+	void updatePhonemePairs(const char* sourceDirectory);
 
 	/**
-	 * Load a code book from storage file
+	 * Load data from a storage file
 	 */
-	bool loadPhonemes();
+	PhonemeMap* loadFromStorageFile(const char* storageFile);
 
 	/**
-	 * Flush data into FS
+	 * Create a storage file from a directory
 	 */
-	bool persist();
+	PhonemeMap* createFromDirectory(const char* storageFile, const char* sourceDirectory);
 
 	// Read helpers
 	static void readHeader(istream& stream, string name);
@@ -38,8 +42,9 @@ public:
 	static void processReadResults(bool isOk, string name, string actualValue);
 
 	// Common attributes
-	static const char* STORAGE_FILE;
-	static const char* PHONEMES_DIRECTORY;
+	static const char* STORAGE_DIRECTORY;
+	static const char* PHONEMES_FILE;
+	static const char* PHONEME_PAIRS_FILE;
 
 private:
 
@@ -47,6 +52,13 @@ private:
 	 * Phoneme Map
 	 */
 	PhonemeMap* phonemeMap;
+
+	/**
+	 * Phoneme Pair Map
+	 */
+	PhonemeMap* phonemePairMap;
+
+	string getStorageFilePath(const char* storageFile);
 };
 
 } /* namespace model */

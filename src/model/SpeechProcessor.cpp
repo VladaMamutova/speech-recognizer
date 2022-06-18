@@ -13,10 +13,10 @@ SpeechProcessor::~SpeechProcessor()
 	// Storage is an independent object, SpeechProcessor doesn't own it.
 }
 
-const vector<PhonemePrediction*>* SpeechProcessor::findLabelsByFeatures(const vector<MfccFeatures*>* mfccFeatures)
+const vector<PhonemePrediction*>* SpeechProcessor::predictPhonemesByFeatures(const vector<MfccFeatures*>* mfccFeatures)
 {
 	vector<PhonemePrediction*>* predictions = new vector<PhonemePrediction*>();
-	const PhonemeMap* phonemeMap = storage->getPhonemeMap();
+	const PhonemeMap* phonemeMap = storage->fetchPhonemeMap();
 
 	cout << "Labels:" << endl;
 

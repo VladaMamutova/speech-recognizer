@@ -21,64 +21,24 @@ public:
 	void process();
 
 private:
-	// Input arguments
 	int argc;
 	char** argv;
 
-	/**
-	 * Audio processor
-	 */
 	AudioProcessor* audioProcessor;
-
-	/**
-	 * Speech processor
-	 */
 	SpeechProcessor* speechProcessor;
-
-	/**
-	 * Speech data storage
-	 */
 	Storage* storage;
 
-	/**
-	 * Checks whether input arguments are specified
-	 */
 	void checkInputArguments();
-
-	/**
-	 * Reads speech input data
-	 */
 	void readSpeechData();
 
-	/**
-	 * Checks if the speech input data specified
-	 */
-	void checkSpeechData();
-
-	/**
-	 * Print build information
-	 */
 	void printVersion();
-	
-	/**
-	 * Print help information
-	 */
 	void printHelp();
 
-	/**
-	 * Display the MFCC features retrieved from the input data
-	 */
-	void displayMfcc();
-
-	/**
-	 * Display the MFCC features for the phoneme
-	 */
 	void printPhonemeFeatures(const char* phonemeLabel);
 
-	/**
-	 * Predict phoneme labels for the input data
-	 */
-	void predictLabels();
+	void displayMfcc();
+	void predictPhonemes();
+
 };
 
 } /* namespace command */

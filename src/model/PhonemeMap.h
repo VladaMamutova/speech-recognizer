@@ -26,6 +26,7 @@ public:
 	~PhonemeMap();
 
 	const map<string, Phoneme*>* getPhonemes() const;
+	inline size_t getSize() const { return phonemes->size(); };
 
 	void addPhoneme(Phoneme *phoneme);
 	void removePhoneme(string phonemeLabel);

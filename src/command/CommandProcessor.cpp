@@ -13,33 +13,39 @@ namespace command {
  * Commands map
  */
 static struct option longOptions[] = {
-	{ "version", no_argument, 0, 'v' },
-	{ "help", no_argument, 0, 'h' },
+	// { const char *name, int has_arg, int *flag, int val }
+	// если flag = NULL, то getopt_long для длинной опции возвращает val
+	{ "version", no_argument, NULL, 'v' },
+	{ "help", no_argument, NULL, 'h' },
 
-	{ "mfcc", no_argument, 0, 'm' },
-	{ "phoneme-features", required_argument, 0, 'f' },
+    { "update-phonemes", required_argument, NULL, '1' },
+	{ "update-phoneme-pairs", required_argument, NULL, '2' },
+	{ "lsa-train", required_argument, NULL, 'l' },
+	{ "term-frequency", required_argument, NULL, 't' },
 
-	{ "predict-labels", no_argument, 0, 'p' },
-	{ "term-frequency", required_argument, 0, 't' },
+	{ "phoneme-features", required_argument, NULL, 'f' },
 
-	{ "lsa-train", required_argument, 0, 'l' },
+	{ "mfcc", no_argument, NULL, 'm' },
+	{ "predict-phonemes", no_argument, NULL, 'p' },
+
 
 	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhmf:pt:l:";
+static const char* const shortOptions = "vhl:t:mf:p";
 
 void CommandProcessor::process()
 {
 	checkInputArguments();
-	readSpeechData();
 
 	bool processed = false;
 	int option;
+	int option_index;
+
 	LsaTrainer *lsaTrainer;
 	do
 	{
-		option = getopt_long(argc, argv, shortOptions, longOptions, NULL);
+		option = getopt_long(argc, argv, shortOptions, longOptions, &option_index);
 		switch (option) {
 			case -1: // The end of the options.
 			  processed = true;
@@ -50,23 +56,34 @@ void CommandProcessor::process()
 			case 'h':
 				printHelp();
 				break;
-			case 'm':
-				checkSpeechData();
-				displayMfcc();
+			case '1':
+				storage->updatePhonemes(optarg);
 				break;
-			case 'f':
-				printPhonemeFeatures(optarg);
+			case '2':
+				storage->updatePhonemePairs(optarg);
 				break;
-			case 'p':
-				checkSpeechData();
-				predictLabels();
-				break;
-			case 't':
-				TermFrequency::createFromDirectory(optarg);
+			case 'u':
+				lsaTrainer = new LsaTrainer(optarg);
+				lsaTrainer->train();
 				break;
 			case 'l':
 				lsaTrainer = new LsaTrainer(optarg);
 				lsaTrainer->train();
+				break;
+			case 't':
+				TermFrequency::createFromDirectory(optarg);
+				break;
+			case 'f':
+				printPhonemeFeatures(optarg);
+				break;
+			case 'm':
+				readSpeechData();
+				displayMfcc();
+				break;
+			case 'p':
+				readSpeechData();
+				predictPhonemes();
+				break;
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
@@ -105,8 +122,12 @@ void CommandProcessor::checkInputArguments()
 
 void CommandProcessor::readSpeechData()
 {
-	// Skip this step if the argument starts with a '-' (it is an option).
-	if (argv[argc - 1][0] == '-') return;
+	// Skip this step if the last or prelast argument starts with a '-' (it is an option or argument).
+	if (argv[argc - 1][0] == '-') {
+		cout << "Error: No input data specified." << endl;
+		cout << "Please use -h (--help) for details." << endl;
+		exit(EXIT_FAILURE);
+	}
 
 	WavData* wavData = WavData::readFromFile(argv[argc - 1]);
 	if (wavData == NULL) {
@@ -114,15 +135,6 @@ void CommandProcessor::readSpeechData()
 	}
 
 	audioProcessor = new AudioProcessor(wavData);
-}
-
-void CommandProcessor::checkSpeechData()
-{
-	if (audioProcessor == NULL || audioProcessor->getWavData() == NULL) {
-		cout << "Error: No input data specified." << endl;
-		cout << "Please take a look on the help info for details:" << endl;
-		exit(EXIT_FAILURE);
-	}
 }
 
 void CommandProcessor::printVersion()
@@ -143,11 +155,14 @@ void CommandProcessor::displayMfcc()
 
 void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 {
-	const map<string, Phoneme*>* phonemes = storage->getPhonemeMap()->getPhonemes();
+	const map<string, Phoneme*>* phonemes = storage->fetchPhonemeMap()->getPhonemes();
 
 	if (phonemes->count(phonemeLabel) == 0) {
-		cout << "Phoneme with label \"" << phonemeLabel << "\" not found." << endl;
-		return;
+		phonemes = storage->fetchPhonemePairMap()->getPhonemes();
+		if (phonemes->count(phonemeLabel) == 0) {
+			cout << "Phoneme with label \"" << phonemeLabel << "\" not found." << endl;
+			return;
+		}
 	}
 
 	Phoneme* phoneme = phonemes->at(phonemeLabel);
@@ -155,10 +170,12 @@ void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 	cout << *phoneme->getFeatureVector();
 }
 
-void CommandProcessor::predictLabels()
+void CommandProcessor::predictPhonemes()
 {
 	audioProcessor->divideIntoFrames();
-	speechProcessor->findLabelsByFeatures(audioProcessor->getFrameMfccs());
+	speechProcessor->predictPhonemesByFeatures(audioProcessor->getFrameMfccs());
+}
+
 }
 
 } /* namespace command */

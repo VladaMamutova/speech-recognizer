@@ -1,17 +1,21 @@
 #include <fstream>
 #include <utility>
+#include <sys/stat.h> // mkdir
 #include <unistd.h> // access()
 #include "../config.h"
 #include "Storage.h"
 
 namespace model {
 
-const char* Storage::STORAGE_FILE = "storage.dat";
-const char* Storage::PHONEMES_DIRECTORY = "resources/phonemes";
+const char* Storage::STORAGE_DIRECTORY = "storage";
+const char* Storage::PHONEMES_FILE = "phonemes.dat";
+const char* Storage::PHONEME_PAIRS_FILE = "phoneme_pairs.dat";
 
 Storage::Storage()
 {
 	this->phonemeMap = NULL;
+	this->phonemePairMap = NULL;
+	mkdir(STORAGE_DIRECTORY, S_IRWXU | S_IROTH);
 }
 
 Storage::~Storage()
@@ -19,61 +23,101 @@ Storage::~Storage()
 	if (phonemeMap != NULL) {
 		delete phonemeMap;
 	}
+
+	if (phonemePairMap != NULL) {
+		delete phonemePairMap;
+	}
 }
 
-const PhonemeMap* Storage::getPhonemeMap()
+const PhonemeMap* Storage::fetchPhonemeMap()
 {
-	if (phonemeMap == NULL) {
-		loadPhonemes();
+	if (phonemeMap != NULL) {
+		return phonemeMap;
 	}
 
+	phonemeMap = loadFromStorageFile(PHONEMES_FILE);
 	return phonemeMap;
 }
 
-bool Storage::loadPhonemes()
+const PhonemeMap* Storage::fetchPhonemePairMap()
 {
-	if (access(STORAGE_FILE, F_OK) == -1) {
-		cout << "Storage not found, creating an empty one..." << endl;
-		return persist();
+	if (phonemePairMap != NULL) {
+		return phonemePairMap;
 	}
 
-	cout << "Loading data from the storage..." << endl;
+	phonemePairMap = loadFromStorageFile(PHONEME_PAIRS_FILE);
+	return phonemePairMap;
+}
+
+void Storage::updatePhonemes(const char* sourceDirectory)
+{
+	if (phonemeMap != NULL) {
+		delete phonemeMap;
+	}
+
+	phonemeMap = createFromDirectory(PHONEMES_FILE, sourceDirectory);
+}
+
+void Storage::updatePhonemePairs(const char* sourceDirectory)
+{
+	if (phonemePairMap != NULL) {
+		delete phonemePairMap;
+	}
+
+	phonemePairMap = createFromDirectory(PHONEME_PAIRS_FILE, sourceDirectory);
+}
+
+PhonemeMap* Storage::loadFromStorageFile(const char* storageFile)
+{
+	string storageFilePath = string(STORAGE_DIRECTORY) + "/" + storageFile;
 
 	ifstream stream;
-	stream.open(STORAGE_FILE, ios::in);
+	stream.open(storageFilePath, ios::in);
 
 	if (!stream.good()) {
-		cerr << "Failed to open storage file \"" << STORAGE_FILE << "\"" << endl;
+		cerr << "Failed to open storage file \"" << storageFilePath << "\"." << endl;
 		exit(EXIT_FAILURE);
 	}
 
-	phonemeMap = new PhonemeMap();
-	stream >> *(phonemeMap);
+	cout << "Loading data from the storage file \"" << storageFilePath << "\"..." << endl;
 
+	PhonemeMap* data = new PhonemeMap();
+	stream >> *data;
 	stream.close();
 
-	return true;
+	cout << "\nData from storage file successfully loaded!" << endl;
+	
+	return data;
 }
 
-bool Storage::persist()
+PhonemeMap* Storage::createFromDirectory(const char* storageFile, const char* sourceDirectory)
 {
+	string storageFilePath = getStorageFilePath(storageFile);
+
 	ofstream stream;
-	stream.open(STORAGE_FILE, ios::out | ios::binary);
+	stream.open(storageFilePath, ios::out | ios::binary);
 
 	if (!stream.good()) {
-		cerr << "Error: Failed to open storage file \"" << STORAGE_FILE << "\"" << endl;
-		return false;
+		cerr << "Error: Failed to create storage file \"" << storageFilePath << "\"." << endl;
+		exit(EXIT_FAILURE);
 	}
 
-	phonemeMap = PhonemeMap::loadFromDirectory(PHONEMES_DIRECTORY);
-	stream << *phonemeMap;
+	PhonemeMap* data = PhonemeMap::loadFromDirectory(sourceDirectory);
+	if (data == NULL) {
+		exit(EXIT_FAILURE);
+	}
 
+	stream << *data;
 	stream.close();
-	cout << "\nStorage data successfully updated!" << endl;
 
-	return true;
+	cout << "Storage file \"" << storageFilePath << "\" with " << data->getSize();
+	cout << " models successfully created!" << endl;
+	return data;
 }
 
+string Storage::getStorageFilePath(const char* storageFile) {
+	return string(STORAGE_DIRECTORY) + "/" + storageFile;
+}
 
 void Storage::readHeader(istream& stream, string name)
 {

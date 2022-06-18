@@ -97,7 +97,7 @@ TermFrequency* TermFrequency::createFromDirectory(const char* directoryName)
 	DIR *directory;
 	if ((directory = opendir(directoryName)) == NULL) {
 		cout << "Error: Failed to load corpus from directory \"" << directoryName << "\"" << endl;
-		return NULL;
+		exit(EXIT_FAILURE);
 	}
 
 	struct dirent *file;
@@ -110,8 +110,9 @@ TermFrequency* TermFrequency::createFromDirectory(const char* directoryName)
 			wfstream fstream;
 			fstream.open(fileName);
 			if (!fstream.is_open()) {
-				cout << "Error: File \"" << fileName << "\" not found.\n";
-				return NULL;
+				cout << "Error: Failed to open file \"" << fileName << "\".\n";
+				closedir(directory);
+				exit(EXIT_FAILURE);
 			}
 
 			vector<wstring> words = getWords(fstream);

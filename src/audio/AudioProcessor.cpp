@@ -40,7 +40,7 @@ void AudioProcessor::divideIntoFrames()
 {
   if (this->frames != NULL) return;
 
-  cout << "Dividing into frames and calculating MFCC... " << endl;
+  //cout << "Dividing into frames and calculating MFCC... " << endl;
   this->samplesPerFrame = calculateSamplesPerFrame();
   this->frames = new vector<Frame*>();
 

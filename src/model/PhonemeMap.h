@@ -31,7 +31,8 @@ public:
 	void addPhoneme(Phoneme *phoneme);
 	void removePhoneme(string phonemeLabel);
 
-	PhonemePrediction* findLabelByFeatures(MfccFeatures* mfccFeatures) const;
+	PhonemePrediction* predictLabelByFeatures(MfccFeatures* mfccFeatures) const;
+	PhonemePrediction* predictLabelByFeatures(vector<double*>& featureVector) const;
 
 	friend ostream& operator<<(ostream& stream, const PhonemeMap& phonemeMap);
 	friend istream& operator>>(istream& stream, PhonemeMap& phonemeMap);

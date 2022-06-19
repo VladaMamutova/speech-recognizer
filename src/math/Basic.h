@@ -33,7 +33,7 @@ public:
 
 	static double spearmanCorrelation(const vector<double> &x, const vector<double> &y);
 	static vector<double> rankify(const vector<double> &values);
-	//static double DwtDistance(const std::vector<double*> &actual, const std::vector< std::vector<double>> &training);
+	static double DwtDistance(const vector<double*> &actual, const vector<double*> &training, int size);
 };
 
 } /* namespace math */

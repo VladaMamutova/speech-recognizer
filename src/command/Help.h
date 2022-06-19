@@ -38,6 +38,10 @@ static const char* const helpInfo =	EOL
 	"-m, --mfcc              Display MFCCs retrieved from the \033[4mFILE\033[0m" EOL
     "-p, --predict-phonemes  Predict phonemes on frames from the \033[4mFILE\033[0m" EOL
 
+	EOL
+
+    "-r, --recognize         Recognize speech from the \033[4mFILE\033[0m" EOL	
+
 	;
 
 } /* namespace command */

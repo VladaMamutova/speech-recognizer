@@ -28,11 +28,12 @@ static struct option longOptions[] = {
 	{ "mfcc", no_argument, NULL, 'm' },
 	{ "predict-phonemes", no_argument, NULL, 'p' },
 
+	{ "recognize", no_argument, NULL, 'r' },
 
 	{NULL, 0, NULL, 0}
 };
 
-static const char* const shortOptions = "vhl:t:mf:p";
+static const char* const shortOptions = "vhl:t:mf:pr";
 
 void CommandProcessor::process()
 {
@@ -84,6 +85,9 @@ void CommandProcessor::process()
 				readSpeechData();
 				predictPhonemes();
 				break;
+			case 'r':
+				readSpeechData();
+				recognize();
 				break;
 			default:
 				cout << "Please, use -h (--help) for details." << endl;
@@ -176,6 +180,19 @@ void CommandProcessor::predictPhonemes()
 	speechProcessor->predictPhonemesByFeatures(audioProcessor->getFrameMfccs());
 }
 
+void CommandProcessor::recognize()
+{
+	audioProcessor->divideIntoFrames();
+	vector<MfccFeatures*>* mfccFeatures = audioProcessor->getFrameMfccs();
+	
+	cout << "Source:" << endl;
+	cout << *mfccFeatures << endl;
+	
+	speechProcessor->predictPhonemesByFeatures(mfccFeatures);
+
+	cout << endl;
+
+	speechProcessor->predictPhonemePairsByFeatures(mfccFeatures);
 }
 
 } /* namespace command */

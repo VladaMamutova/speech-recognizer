@@ -6,7 +6,6 @@
 #include "../audio/AudioProcessor.h"
 #include "../math/Basic.h"
 
-
 namespace model {
 
 const string PhonemeMap::UNKNOWN_VALUE = "?";
@@ -53,7 +52,7 @@ void PhonemeMap::removePhoneme(string label)
 	this->phonemes->erase(label);
 }
 
-PhonemePrediction* PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) const
+PhonemePrediction* PhonemeMap::predictLabelByFeatures(MfccFeatures* mfccFeatures) const
 {
 	double minDistance = -1;
 	string label = UNKNOWN_VALUE;
@@ -86,6 +85,27 @@ PhonemePrediction* PhonemeMap::findLabelByFeatures(MfccFeatures* mfccFeatures) c
 		}
 		prediction->addPrediction(phoneme->first, minDistance);
 		//cout << endl;
+	}
+
+	return prediction;
+}
+
+PhonemePrediction* PhonemeMap::predictLabelByFeatures(vector<double*>& featureVector) const
+{
+	PhonemePrediction* prediction = new PhonemePrediction();
+
+	map<string, Phoneme*>::const_iterator phoneme;
+	for (phoneme = this->phonemes->begin(); phoneme != this->phonemes->end(); phoneme++)
+	{
+		vector<double*> sampleFeatureVector;
+		vector<MfccFeatures*>* features = phoneme->second->getFeatureVector();
+		for (size_t i = 0; i < 10 && i < features->size(); i++)
+		{
+			sampleFeatureVector.push_back(features->at(i)->getData());
+		}
+
+		double distance = math::Basic::DwtDistance(featureVector, sampleFeatureVector, features->at(0)->getSize());
+		prediction->addPrediction(phoneme->first, distance);
 	}
 
 	return prediction;

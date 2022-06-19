@@ -60,8 +60,6 @@ const double ENTROPY_THRESHOLD = 0.1;
  */
 const double K = 0.05;
 
-// Helpers
-
 #define UNUSED(expr) do { (void)(expr); } while (0)
 
 #endif /* CONFIG_H */

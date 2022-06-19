@@ -131,27 +131,27 @@ double Basic::spearmanCorrelation(const vector<double> &x, const vector<double> 
 	return spearman;
 }
 
-//double Basic::DwtDistance(const std::vector<double*> &actual, const std::vector<std::vector<double>> &training)
-//{
-	// int m = actual.size();
-    // int n = training.size();
+double Basic::DwtDistance(const vector<double*> &actual, const vector<double*> &training, int size)
+{
+	int m = actual.size();
+    int n = training.size();
 
-    // double cost[m][n];
+    vector<vector<double>> cost = vector<vector<double>>(m, vector<double>(n));
 
-    // cost[0][0] = euclideanDistance(actual[0], training[0]);
+    cost[0][0] = euclideanDistance(actual[0], training[0], size);
 
-    // for(int i = 1; i < m; i++)
-    //         cost[i][0] = cost[i-1][0] + Euclidean::Euclidean_distance(actual[i], training[0]);
-    // for(int j = 1; j < n; j++)
-    //         cost[0][j] = cost[0][j-1] + Euclidean::Euclidean_distance(actual[0], training[j]);
+    for(int i = 1; i < m; i++)
+            cost[i][0] = cost[i-1][0] + euclideanDistance(actual[i], training[0], size);
+    for(int j = 1; j < n; j++)
+            cost[0][j] = cost[0][j-1] + euclideanDistance(actual[0], training[j], size);
 
-    // for(int i = 1; i < m; i++)
-    //         for(int j = 1; j < n; j++)
-    //             cost[i][j] = std::min(cost[i-1][j], std::min(cost[i][j-1], cost[i-1][j-1])) 
-    //                 + Euclidean::Euclidean_distance(actual[i],training[j]);
+    for(int i = 1; i < m; i++)
+            for(int j = 1; j < n; j++)
+                cost[i][j] = min(cost[i-1][j], min(cost[i][j-1], cost[i-1][j-1])) 
+                    + euclideanDistance(actual[i], training[j], size);
     
-    // return cost[m-1][n-1];
+    return cost[m-1][n-1];
 
-//}
+}
 
 } /* namespace math */

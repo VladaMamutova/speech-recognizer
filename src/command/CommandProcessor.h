@@ -34,6 +34,7 @@ private:
 	void printVersion();
 	void printHelp();
 
+	void printTermFrequency(const char* directory);
 	void printPhonemeFeatures(const char* phonemeLabel);
 
 	void displayMfcc();

@@ -42,12 +42,12 @@ vector<PhonemePrediction*>* SpeechProcessor::predictPhonemePairsByFeatures(const
 
 	cout << "Phoneme pairs:" << endl;
 
-	for (size_t i = 0; i + 10 - 5 < mfccFeatures->size(); i += 2) {
-		//cout << (i / 10) << " block: " << endl;
+	int featureLength = phonemePairMap->calcAverageFeatureNumber();
+	for (size_t i = 0; i + (int)(featureLength * 0.5) + 1 < mfccFeatures->size(); i++) {
 		vector<double*> featureVector;
-		for (size_t j = i; j < i + 10 && j < mfccFeatures->size(); j++)
+		size_t j;
+		for (j = i; j < i + featureLength && j < mfccFeatures->size(); j++)
 		{
-			//cout << *mfccFeatures->at(j) << endl;
 			featureVector.push_back(mfccFeatures->at(j)->getData());
 		}
 		
@@ -55,11 +55,28 @@ vector<PhonemePrediction*>* SpeechProcessor::predictPhonemePairsByFeatures(const
 		
 		predictions->push_back(prediction);
 
-		cout << i << ": " << *prediction << endl;
-		i++;
+		int offset = mfccFeatures->at(0)->getFrameId();
+		cout << "[" << i + offset << " - " << j + offset - 1 << "]: " << *prediction << endl;
 	}
 
 	return predictions;
+}
+
+void SpeechProcessor::recognize(AudioProcessor* audioProcessor)
+{
+	vector<pair<uint32_t, uint32_t>>* frameGroups = audioProcessor->fetchFrameGroups();
+	vector<pair<uint32_t, uint32_t>>::iterator frameGroup;
+	int i = 1;
+	for (frameGroup = frameGroups->begin(); frameGroup != frameGroups->end(); ++frameGroup) {
+		uint32_t start = frameGroup->first;
+		uint32_t end = frameGroup->second;
+		vector<MfccFeatures*>* features = audioProcessor->fetchFrameGroupMfccs(start - 4, end + 4);
+
+		cout << "Word " << i << ": " << endl;
+		predictPhonemePairsByFeatures(features);
+		i++;
+	}
+
 }
 
 } /* namespace model */

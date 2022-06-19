@@ -3,8 +3,8 @@
 
 namespace audio {
 
-Frame::Frame(uint32_t id, uint32_t start, uint32_t end):
-	id(id), start(start), end(end)
+Frame::Frame(uint32_t number, uint32_t start, uint32_t end):
+	number(number), start(start), end(end)
 {
 	this->rms = 0;
 	this->entropy = 0;
@@ -23,10 +23,10 @@ void Frame::init(const raw_t* source, const double* sourceNormalized, uint32_t f
 	this->entropy = Basic::entropy(sourceNormalized, this->start, this->end, ENTROPY_BINS, -1, 1);
 	double* mfcc = MFCC::transform(sourceNormalized, this->start, this->end, MfccFeatures::SIZE, frequency,
 		MFCC_FREQ_MIN, MFCC_FREQ_MAX);
-	this->mfcc = new MfccFeatures(mfcc);
+	this->mfcc = new MfccFeatures(mfcc, number);
 }
 
-uint32_t Frame::getId() const { return this->id; }
+uint32_t Frame::getNumber() const { return this->number; }
 uint32_t Frame::getStart() const { return this->start; }
 uint32_t Frame::getEnd() const { return this->end; }
 

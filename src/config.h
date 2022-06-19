@@ -56,6 +56,21 @@ const short ENTROPY_BINS = 75;
 const double ENTROPY_THRESHOLD = 0.1;
 
 /**
+ * Minimal size of word (in frames)
+ * <p>
+ * According my experiments average length of the words in my dictionary is 500ms.
+ * Let's put that the minimal length of word is 200ms.
+ */
+const unsigned short FRAME_GROUP_MIN_SIZE = (100 / FRAME_LENGTH) / (1 - FRAME_OVERLAP);
+
+/**
+ * Minimal amount of framer between two words
+ * <p>
+ * Let's put that minimal distance between two words is 50% of minimal size of word
+ */
+const unsigned short FRAME_GROUP_MIN_DISTANCE = FRAME_GROUP_MIN_SIZE * 0.50;
+
+/**
  * Percentage of singular values
  */
 const double K = 0.05;

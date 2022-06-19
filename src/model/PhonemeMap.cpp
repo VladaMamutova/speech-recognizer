@@ -12,11 +12,6 @@ const string PhonemeMap::UNKNOWN_VALUE = "?";
 const string PHONEME_MAP = "PHONEME_MAP";
 const double MFCC_WEIGHTS[] = { 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1 };
 
-const map<string, Phoneme*>* PhonemeMap::getPhonemes() const
-{
-	return this->phonemes;
-}
-
 PhonemeMap::PhonemeMap()
 {
 	this->phonemes = new map<string, Phoneme*>();
@@ -36,6 +31,31 @@ PhonemeMap::~PhonemeMap()
 		delete this->phonemes;
 	}
 }
+
+const map<string, Phoneme*>* PhonemeMap::getPhonemes() const
+{
+	return this->phonemes;
+}
+
+const size_t PhonemeMap::getSize() const
+{
+	return phonemes->size();
+};
+
+const int PhonemeMap::calcAverageFeatureNumber() const
+{
+	int averageFeatureNumber = 0;
+	if (averageFeatureNumber == 0 && phonemes->size() > 0) {
+		map<string, Phoneme*>::iterator phoneme;
+		for (phoneme = phonemes->begin(); phoneme != phonemes->end(); phoneme++)
+		{
+			averageFeatureNumber += phoneme->second->getFeatureVectorSize();
+		}
+		averageFeatureNumber /= phonemes->size();
+	}
+
+	return averageFeatureNumber;
+};
 
 void PhonemeMap::addPhoneme(Phoneme* phoneme)
 {
@@ -130,7 +150,6 @@ istream& operator>>(istream& stream, PhonemeMap& phonemeMap)
 	phonemeMap.phonemes->clear();
 
 	size_t phonemeMapSize = Storage::readNamedInt(stream, PHONEME_MAP, true);
-
 	for (size_t i = 0; i < phonemeMapSize; i++)
 	{
 		string label;
@@ -183,9 +202,7 @@ PhonemeMap* PhonemeMap::loadFromDirectory(const char* directoryName)
 				label = label.substr(0, label.find_last_of('.'));
 
 				AudioProcessor *audioProcessor = new AudioProcessor(wavData);
-				audioProcessor->divideIntoFrames();
-
-				Phoneme* phoneme = new Phoneme(label, audioProcessor->getFrameMfccs());
+				Phoneme* phoneme = new Phoneme(label, audioProcessor->fetchFrameMfccs());
 				phonemeMap->addPhoneme(phoneme);
 			}
 		}

@@ -30,10 +30,10 @@ static struct option longOptions[] = {
 
 	{ "recognize", no_argument, NULL, 'r' },
 
-	{NULL, 0, NULL, 0}
+	{ NULL, 0, NULL, 0 }
 };
 
-static const char* const shortOptions = "vhl:t:mf:pr";
+static const char* const shortOptions = "vhl:t:f:mpr";
 
 void CommandProcessor::process()
 {
@@ -63,16 +63,12 @@ void CommandProcessor::process()
 			case '2':
 				storage->updatePhonemePairs(optarg);
 				break;
-			case 'u':
-				lsaTrainer = new LsaTrainer(optarg);
-				lsaTrainer->train();
-				break;
 			case 'l':
 				lsaTrainer = new LsaTrainer(optarg);
 				lsaTrainer->train();
 				break;
 			case 't':
-				TermFrequency::createFromDirectory(optarg);
+				printTermFrequency(optarg);
 				break;
 			case 'f':
 				printPhonemeFeatures(optarg);
@@ -153,8 +149,13 @@ void CommandProcessor::printHelp()
 
 void CommandProcessor::displayMfcc()
 {
-	audioProcessor->divideIntoFrames();
-	cout << *audioProcessor->getFrameMfccs();
+	cout << *audioProcessor->fetchFrameMfccs();
+}
+
+void CommandProcessor::printTermFrequency(const char* directory)
+{
+	TermFrequency* termFrequency = TermFrequency::createFromDirectory(directory);
+	cout << *termFrequency;
 }
 
 void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
@@ -176,23 +177,17 @@ void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 
 void CommandProcessor::predictPhonemes()
 {
-	audioProcessor->divideIntoFrames();
-	speechProcessor->predictPhonemesByFeatures(audioProcessor->getFrameMfccs());
+	speechProcessor->predictPhonemesByFeatures(audioProcessor->fetchFrameMfccs());
 }
 
 void CommandProcessor::recognize()
 {
-	audioProcessor->divideIntoFrames();
-	vector<MfccFeatures*>* mfccFeatures = audioProcessor->getFrameMfccs();
-	
-	cout << "Source:" << endl;
-	cout << *mfccFeatures << endl;
-	
-	speechProcessor->predictPhonemesByFeatures(mfccFeatures);
+	speechProcessor->predictPhonemesByFeatures(audioProcessor->fetchFrameMfccs());
+	cout << endl;
+	//speechProcessor->predictPhonemePairsByFeatures(mfccFeatures);
 
 	cout << endl;
-
-	speechProcessor->predictPhonemePairsByFeatures(mfccFeatures);
+	speechProcessor->recognize(audioProcessor);
 }
 
 } /* namespace command */

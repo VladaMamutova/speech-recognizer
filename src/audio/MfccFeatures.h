@@ -32,17 +32,19 @@ public:
 	static const size_t SIZE;
 
 	MfccFeatures();
-	MfccFeatures(double* data);
+	MfccFeatures(double* data, int frameId);
 	~MfccFeatures();
 
 	inline size_t getSize() const { return SIZE; } // inline for optimization
 	inline double* getData() const { return this->data; }
+	inline int getFrameId() const { return this->frameId; }
 
 	friend ostream& operator<<(ostream& stream, const MfccFeatures& mfccFeatures);
 	friend ostream& operator<<(ostream& stream, const vector<MfccFeatures*>& featureVector);
 	friend istream& operator>>(istream& stream, MfccFeatures& mfccFeatures);
 private:
 	double*	data;
+	int frameId;
 };
 
 } /* namespace audio */

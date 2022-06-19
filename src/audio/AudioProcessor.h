@@ -1,6 +1,7 @@
 #ifndef AUDIO_PROCESSOR_H
 #define AUDIO_PROCESSOR_H
 
+#include <map>
 #include "WavData.h"
 #include "Frame.h"
 
@@ -17,11 +18,11 @@ public:
 	AudioProcessor(WavData* wavData);
 	~AudioProcessor();
 
-  const WavData* getWavData() const;
-
-  void divideIntoFrames();
-  vector<Frame*>* getFrames();
-  vector<MfccFeatures*>* getFrameMfccs();
+	const WavData* getWavData() const;
+	vector<Frame*>* fetchFrames();
+	vector<MfccFeatures*>* fetchFrameMfccs();
+	vector<pair<uint32_t, uint32_t>>* fetchFrameGroups();
+	vector<MfccFeatures*>* fetchFrameGroupMfccs(uint32_t frameGroupStart, uint32_t frameGroupEnd);
 
 private:
 	WavData* wavData;
@@ -29,7 +30,20 @@ private:
 	vector<Frame*>* frames;
 	uint32_t samplesPerFrame;
 
+	vector<pair<uint32_t, uint32_t>>* frameGroups;
+
+	double rmsMax;
+	double silenceThreshold;
+
 	uint32_t calculateSamplesPerFrame();
+	void divideIntoFrames();
+	void divideIntoFrameGroupsBySilence();
+
+	int processSilence(uint32_t firstFrameInGroup, uint32_t currentFrame,
+		uint32_t& previousGroupStart, uint32_t& previousGroupEnd);
+	bool findSilenceThreshold();
+	void cleanUpShortFrameGroups();
+	void mergeAllFramesIntoOneGroup();
 };
 
 } /* namespace audio */

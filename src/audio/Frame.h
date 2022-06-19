@@ -16,7 +16,7 @@ namespace audio {
 class Frame {
 
 public:
-	Frame(uint32_t id, uint32_t start, uint32_t end);
+	Frame(uint32_t number, uint32_t start, uint32_t end);
 	~Frame();
 
 	/**
@@ -24,7 +24,7 @@ public:
 	 */
 	void init(const raw_t* source, const double* sourceNormalized, uint32_t frequency);
 
-	uint32_t getId() const;
+	uint32_t getNumber() const;
 	uint32_t getStart() const;
 	uint32_t getEnd() const;
 
@@ -33,7 +33,7 @@ public:
 	MfccFeatures* getMfcc() const;
 
 private:
-	const uint32_t id;
+	const uint32_t number;
 	const uint32_t start;
 	const uint32_t end;
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Storage.h"
+#include "../audio/AudioProcessor.h"
 
 using namespace std;
 
@@ -16,6 +17,10 @@ public:
     vector<PhonemePrediction*>* predictPhonemesByFeatures(const vector<MfccFeatures*>* features);
 	vector<PhonemePrediction*>* predictPhonemePairsByFeatures(const vector<MfccFeatures*>* features);
 
+	void recognize(AudioProcessor* audioProcessor);
+
+    //vector<PhonemeMap*> findUniqueObservations(vector<PhonemePrediction*>* predictions);
+    //vector<PhonemeMap*> findSimilarPhonemePairs(Phoneme* phonemePair);
 private:
 	Storage* storage;
 };

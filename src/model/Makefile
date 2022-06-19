@@ -22,7 +22,7 @@ LsaTrainer.o: LsaTrainer.cpp LsaTrainer.h TermFrequency.h ../math/Matrix.h ../ma
 Storage.o: Storage.cpp Storage.h PhonemeMap.h
 	$(CC) $(CFLAGS) -c Storage.cpp
 
-SpeechProcessor.o: SpeechProcessor.cpp SpeechProcessor.h Storage.h
+SpeechProcessor.o: SpeechProcessor.cpp SpeechProcessor.h Storage.h ../audio/AudioProcessor.h
 	$(CC) $(CFLAGS) -c SpeechProcessor.cpp
 
 clean:

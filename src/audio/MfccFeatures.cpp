@@ -12,11 +12,13 @@ const size_t MfccFeatures::SIZE = MFCC_SIZE;
 MfccFeatures::MfccFeatures()
 {
 	this->data = NULL;
+	this->frameId = -1;
 }
 
-MfccFeatures::MfccFeatures(double* data)
+MfccFeatures::MfccFeatures(double* data, int frameId)
 {
 	this->data = data;
+	this->frameId = frameId;
 }
 
 MfccFeatures::~MfccFeatures()

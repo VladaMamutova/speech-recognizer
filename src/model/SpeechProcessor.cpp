@@ -1,4 +1,5 @@
 #include <iterator>
+#include <iomanip>
 #include "SpeechProcessor.h"
 
 namespace model {
@@ -15,21 +16,12 @@ SpeechProcessor::~SpeechProcessor()
 
 vector<PhonemePrediction*>* SpeechProcessor::predictPhonemesByFeatures(const vector<MfccFeatures*>* mfccFeatures)
 {
-	vector<PhonemePrediction*>* predictions = new vector<PhonemePrediction*>();
 	const PhonemeMap* phonemeMap = storage->fetchPhonemeMap();
 
-	cout << "Phonemes:" << endl;
-
+	vector<PhonemePrediction*>* predictions = new vector<PhonemePrediction*>();
 	vector<MfccFeatures*>::const_iterator features;
-	int i = 0;
 	for (features = mfccFeatures->begin(); features != mfccFeatures->end(); ++features) {
-		MfccFeatures* currentFeature = *features;
-		PhonemePrediction* prediction = phonemeMap->predictLabelByFeatures(currentFeature);
-
-		predictions->push_back(prediction);
-
-		cout << i << ": " << *prediction << endl;
-		i++;
+		predictions->push_back(phonemeMap->predictLabelByFeatures(*features));
 	}
 
 	return predictions;
@@ -56,27 +48,32 @@ vector<PhonemePrediction*>* SpeechProcessor::predictPhonemePairsByFeatures(const
 		predictions->push_back(prediction);
 
 		int offset = mfccFeatures->at(0)->getFrameId();
-		cout << "[" << i + offset << " - " << j + offset - 1 << "]: " << *prediction << endl;
+		cout << "[" << right << setw(3) << i + offset << " - " << left << setw(3) << j + offset - 1 << "]: " << *prediction << endl;
 	}
 
 	return predictions;
 }
 
-void SpeechProcessor::recognize(AudioProcessor* audioProcessor)
+string SpeechProcessor::recognize(AudioProcessor* audioProcessor)
 {
 	vector<pair<uint32_t, uint32_t>>* frameGroups = audioProcessor->fetchFrameGroups();
 	vector<pair<uint32_t, uint32_t>>::iterator frameGroup;
 	int i = 1;
+	vector<vector<PhonemePrediction*>*>* predictions = new vector<vector<PhonemePrediction*>*>();
 	for (frameGroup = frameGroups->begin(); frameGroup != frameGroups->end(); ++frameGroup) {
 		uint32_t start = frameGroup->first;
 		uint32_t end = frameGroup->second;
-		vector<MfccFeatures*>* features = audioProcessor->fetchFrameGroupMfccs(start - 4, end + 4);
+		vector<MfccFeatures*>* features = audioProcessor->fetchFrameGroupMfccs(start - 6, end + 6);
 
-		cout << "Word " << i << ": " << endl;
-		predictPhonemePairsByFeatures(features);
+		cout << "\nWord " << i << ": " << endl;
+		predictions->push_back(predictPhonemePairsByFeatures(features));
 		i++;
 	}
 
+	cout << endl;
+
+	// TODO:: получить строку из предсказаний пар фонем для слов
+	return "";
 }
 
 } /* namespace model */

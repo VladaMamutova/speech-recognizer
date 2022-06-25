@@ -33,16 +33,17 @@ ostream& operator<<(ostream& stream, const PhonemePrediction& phonemePrediction)
 	vector<Tree<string, double>::Node*>::const_iterator node;
 	int i = 0;
 	for (node = nodes.begin(); node != nodes.end(); node++) {
-		if (i < 8) { // TODO
-			stream << setw(-2) << (*node)->key << ": " << setw(PhonemePrediction::DISTANCE_PRECISION + 3) << (*node)->value;
+		if (i < 8) {
+			stream << left << setfill(' ') << setw(5) << (*node)->key << ": " << right << setw(PhonemePrediction::DISTANCE_PRECISION + 4) << (*node)->value;
 		}
 
-		if (i < 7) { // node != prev(nodes.end(), 1)
+		if (i < 7) {
 			stream << ", ";
 		}
 		i++;
 	}
 
+	stream << left;
 	return stream;
 }
 

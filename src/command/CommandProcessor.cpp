@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include "CommandProcessor.h"
 #include "Help.h"
@@ -26,7 +27,8 @@ static struct option longOptions[] = {
 	{ "phoneme-features", required_argument, NULL, 'f' },
 
 	{ "mfcc", no_argument, NULL, 'm' },
-	{ "predict-phonemes", no_argument, NULL, 'p' },
+	{ "predict-phonemes", no_argument, NULL, '3' },
+	{ "predict-phoneme-pairs", no_argument, NULL, '4' },
 
 	{ "recognize", no_argument, NULL, 'r' },
 
@@ -77,9 +79,13 @@ void CommandProcessor::process()
 				readSpeechData();
 				displayMfcc();
 				break;
-			case 'p':
+			case '3':
 				readSpeechData();
 				predictPhonemes();
+				break;
+			case '4':
+				readSpeechData();
+				predictPhonemePairs();
 				break;
 			case 'r':
 				readSpeechData();
@@ -155,6 +161,8 @@ void CommandProcessor::displayMfcc()
 void CommandProcessor::printTermFrequency(const char* directory)
 {
 	TermFrequency* termFrequency = TermFrequency::createFromDirectory(directory);
+	cout << "Term-Document Matrix (" << termFrequency->getTermCount() << 
+		" x " << termFrequency->getDocumentCount() << "):" << endl;
 	cout << *termFrequency;
 }
 
@@ -177,7 +185,17 @@ void CommandProcessor::printPhonemeFeatures(const char* phonemeLabel)
 
 void CommandProcessor::predictPhonemes()
 {
-	speechProcessor->predictPhonemesByFeatures(audioProcessor->fetchFrameMfccs());
+	vector<PhonemePrediction*>* predictions = speechProcessor->predictPhonemesByFeatures(audioProcessor->fetchFrameMfccs());
+
+	cout << "Phonemes:" << endl;
+	for (size_t i = 0; i < predictions->size(); i++) {
+		cout << left << setw(2) << i << ": " << *predictions->at(i) << endl;
+	}
+}
+
+void CommandProcessor::predictPhonemePairs()
+{
+	speechProcessor->predictPhonemePairsByFeatures(audioProcessor->fetchFrameMfccs());
 }
 
 void CommandProcessor::recognize()

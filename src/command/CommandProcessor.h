@@ -39,6 +39,7 @@ private:
 
 	void displayMfcc();
 	void predictPhonemes();
+	void predictPhonemePairs();
 
 	void recognize();
 };

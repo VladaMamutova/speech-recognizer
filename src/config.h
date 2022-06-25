@@ -59,7 +59,7 @@ const double ENTROPY_THRESHOLD = 0.1;
  * Minimal size of word (in frames)
  * <p>
  * According my experiments average length of the words in my dictionary is 500ms.
- * Let's put that the minimal length of word is 200ms.
+ * Let's put that the minimal length of word is 100ms.
  */
 const unsigned short FRAME_GROUP_MIN_SIZE = (100 / FRAME_LENGTH) / (1 - FRAME_OVERLAP);
 

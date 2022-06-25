@@ -36,7 +36,7 @@ void LsaTrainer::train()
 	Matrix lowRankMatrix = svd.lowRankApproximation(rank);
 	cout << "\nThe rank of the matrix has been reduced to " << rank << "." << endl;
 
-	map<wstring, Tree<string, double>::Node*>* correlationMap = calculateCorrelation(terms, lowRankMatrix);
+	//map<wstring, Tree<string, double>::Node*>* correlationMap = calculateCorrelation(terms, lowRankMatrix);
 	// TODO:: запись в файл
 }
 

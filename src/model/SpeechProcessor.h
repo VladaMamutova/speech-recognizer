@@ -17,7 +17,7 @@ public:
     vector<PhonemePrediction*>* predictPhonemesByFeatures(const vector<MfccFeatures*>* features);
 	vector<PhonemePrediction*>* predictPhonemePairsByFeatures(const vector<MfccFeatures*>* features);
 
-	void recognize(AudioProcessor* audioProcessor);
+	string recognize(AudioProcessor* audioProcessor);
 
     //vector<PhonemeMap*> findUniqueObservations(vector<PhonemePrediction*>* predictions);
     //vector<PhonemeMap*> findSimilarPhonemePairs(Phoneme* phonemePair);

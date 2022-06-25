@@ -138,7 +138,7 @@ void AudioProcessor::divideIntoFrames()
 
 void AudioProcessor::divideIntoFrameGroupsBySilence()
 {
-	assert(frames->size() >= 5);
+	assert(frames->size() >= 2);
 
 	frameGroups = new vector<pair<uint32_t, uint32_t>>();
 
@@ -156,7 +156,7 @@ void AudioProcessor::divideIntoFrameGroupsBySilence()
 			if ((*frame)->getRms() > silenceThreshold) { // Got a sound
 				if ((int)firstFrameInGroup == -1) {
 					firstFrameInGroup = (*frame)->getNumber();
-					//cout << "FrameGroup started at frame " << firstFrameInGroup << endl;
+					cout << "Got a sound at frame " << firstFrameInGroup << "." << endl;
 				}
 			} else { // Got silence
 				if ((int)firstFrameInGroup >= 0) {
@@ -195,8 +195,8 @@ int AudioProcessor::processSilence(uint32_t firstFrameInGroup, uint32_t currentF
 		previousGroupStart = firstFrameInGroup;
 		previousGroupEnd = currentFrame;
 
-		//cout << "We have a new frame group " << frameGroups->size() - 1 <<
-		//	" (" << firstFrameInGroup << " - " << currentFrame << ")." << endl;
+		cout << frameGroups->size() << " frame group" <<
+			" [" << firstFrameInGroup << " - " << currentFrame << "] created." << endl;
 
 	// We need to add the current group to the previous one
 	} else if (previousFrameGroupInitialized && distance < FRAME_GROUP_MIN_DISTANCE) {
@@ -209,14 +209,11 @@ int AudioProcessor::processSilence(uint32_t firstFrameInGroup, uint32_t currentF
 
 		// Add the frame group only if it has valuable RMS
 		if (currentRms > silenceThreshold * 2) {
-			// uint32_t firstFrameInGroupInPreviousGroupNumber =
-			// 		(*frameGroupMap)[previousGroup->getId()].first;
-
 			frameGroups->erase(frameGroups->end());
 			frameGroups->push_back(make_pair(previousGroupStart, currentFrame));
+			cout << "Frame group [" << previousGroupStart <<  " - " << previousGroupEnd <<
+				"] expanded to [" << previousGroupStart << " - " << currentFrame << "]." << endl;
 			previousGroupEnd = currentFrame;
-			//cout << "FrameGroup (" << previousGroupStart <<  " - " << previousGroupEnd <<
-			//	" will be extended to (" << previousGroupStart << " - " << currentFrame;
 		}
 	}
 
@@ -255,8 +252,8 @@ void AudioProcessor::cleanUpShortFrameGroups()
 	vector<pair<uint32_t, uint32_t>>::iterator frameGroup;
 	for (frameGroup = frameGroups->begin(); frameGroup != frameGroups->end(); ) {
 		if (frameGroup->second - frameGroup->first < FRAME_GROUP_MIN_SIZE) {
-			//cout << "FrameGroup (" << frameGroup->first << " - " << frameGroup->second <<
-			//	") is too short and will be avoided." << endl;
+			cout << "Frame group [" << frameGroup->first << " - " << frameGroup->second <<
+				"] is too short and will be avoided." << endl;
 
 			this->frameGroups->erase(frameGroup);
 		} else {
@@ -270,7 +267,7 @@ void AudioProcessor::mergeAllFramesIntoOneGroup()
 	frameGroups->clear();
 	frameGroups->push_back(make_pair(frames->at(0)->getNumber(), frames->back()->getNumber()));
 
-	//cout << "Seems we have only one frame group in the sample... All frames will be added into the one frame group!" << endl;
+	cout << "Seems we have only one frame group in the sample... All frames will be added into the one frame group!" << endl;
 }
 
 } /* namespace audio */

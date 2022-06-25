@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <map>
 #include "PhonemeMap.h"
+#include "../math/Tree.h"
 
 using namespace std;
 
@@ -57,6 +58,11 @@ private:
 	 * Phoneme Pair Map
 	 */
 	PhonemeMap* phonemePairMap;
+
+	// /**
+	//  * Phoneme Pair Correlation Map
+	//  */
+	// map<wstring, Tree<string, double>::Node*>* phonemePairCorrelation;
 
 	string getStorageFilePath(const char* storageFile);
 };

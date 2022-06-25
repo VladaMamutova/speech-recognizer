@@ -7,16 +7,16 @@ all: $(OBJS)
 WavHeader.o: WavHeader.cpp WavHeader.h
 	$(CC) $(CFLAGS) -c WavHeader.cpp
 
-WavData.o: WavData.cpp WavData.h WavHeader.h
+WavData.o: WavData.cpp WavData.h WavHeader.h ../config.h
 	$(CC) $(CFLAGS) -c WavData.cpp
 
-MfccFeatures.o: MfccFeatures.cpp MfccFeatures.h
+MfccFeatures.o: MfccFeatures.cpp MfccFeatures.h ../config.h
 	$(CC) $(CFLAGS) -c MfccFeatures.cpp
 
-Frame.o: Frame.cpp Frame.h ../config.h MfccFeatures.h ../math/MFCC.h
+Frame.o: Frame.cpp Frame.h ../config.h MfccFeatures.h ../math/MFCC.h ../config.h
 	$(CC) $(CFLAGS) -c Frame.cpp
 
-AudioProcessor.o: AudioProcessor.cpp AudioProcessor.h WavData.h Frame.h
+AudioProcessor.o: AudioProcessor.cpp AudioProcessor.h WavData.h Frame.h ../config.h
 	$(CC) $(CFLAGS) -c AudioProcessor.cpp
 
 

@@ -1,0 +1,93 @@
+@startuml
+
+
+[SpeechRecognizer] -.> command
+
+note left of [SpeechRecognizer]
+  Точка входа в программу
+end note
+
+package "command" {
+  [CommandProcessor]
+  rectangle Help.h
+}
+
+[CommandProcessor] -.> Help.h
+
+note left of command
+  Пакет обработки
+  команд пользователя
+end note
+
+
+package "audio" {
+  [Frame]
+  [MfccFeatures]
+  [AudioProcessor]
+  [WavData]
+  [WavHeader]
+}
+
+[Frame] -.> [MfccFeatures]
+[WavData] -.> [WavHeader]
+[AudioProcessor] -.> [WavData]
+[AudioProcessor] -.> [Frame]
+
+note top of audio
+  Пакет аудиообработки
+end note
+
+package "math" {
+  [Basic]
+  [Matrix]
+  [Tree]
+  [MFCC]
+  [SVD]
+}
+
+[SVD] -.> [Matrix]
+
+note top of math
+  Пакет математических операций
+end note
+
+
+package "model" {
+  [Phoneme]
+  [PhonemeMap]
+  [PhonemePrediction]
+  [TermFrequency]
+  [LsaTrainer]
+  [Storage]
+  [SpeechProcessor]
+}
+
+[PhonemeMap] -.> [Phoneme]
+[PhonemeMap] -.> [PhonemePrediction]
+[SpeechProcessor] -.> [Storage]
+[Storage] -.> [PhonemeMap]
+[LsaTrainer] -.> [TermFrequency]
+
+note top of model
+  Пакет распознавания речи
+end note
+
+folder "resources" {
+  folder phonemes
+  folder phoneme_pairs
+  folder "speech-corpus"
+  rectangle phonemes.dat
+  rectangle phoneme_pairs.dat
+  rectangle phoneme_pair_correlation.dat
+}
+
+note top of resources
+  Директория ресурсов
+end note
+
+command -.-> model
+model -.> audio
+audio -.> math
+
+
+@enduml

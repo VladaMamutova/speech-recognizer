@@ -1,0 +1,5 @@
+// convert to wav
+ffmpeg -i alphabet3.mp3 -acodec pcm_s16le -ac 1 -ar 44100 alphabet_b.wav
+
+// show audio info
+ffprobe -i file.wav

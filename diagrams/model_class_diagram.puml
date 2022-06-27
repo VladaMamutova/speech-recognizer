@@ -1,0 +1,92 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class PhonemeBookEntry {
+-vector<MfccFeatures*>* values
++PhonemeBookEntry(vector<MfccFeatures*>*)
++~PhonemeBookEntry()
++void addValue(MfccFeatures* entry)
++const vector<MfccFeatures*>* getValues()
++size_t getSize()
++void print()
+}
+
+class MfccFeatures {
+}
+
+MfccFeatures -down-* PhonemeBookEntry
+
+class PhonemeBook {
+-map<string, PhonemeBookEntry*>* book
++map<string, PhonemeBookEntry*>* getPhonemeBookEntries()
++PhonemeBook()
++~PhonemeBook()
++void addLabel(string label, MfccFeatures* mfccFeatures)
++void removeLabel(string label)
++string findLabelByFeatures(MfccFeatures* mfccFeatures)
++ostream& operator<<(ostream& fs, const PhonemeBook& phonemeBook)
++istream& operator>>(istream& fs, PhonemeBook& phonemeBook)
++{static} PhonemeBook* loadFromDirectory(const char* directoryName)
+}
+
+PhonemeBookEntry -down-* PhonemeBook
+
+class Storage {
+-PhonemeBook* phonemeBook
+-Term* terms
++{static} const char* STORAGE_FILE
++{static} const char* PHONEME_BOOK_SOURCE_DIRECTORY
++Storage()
++~Storage()
++map<string, PhonemeBookEntry*>* getPhonemeBookEntries()
++void addLabel(string label, MfccFeatures* mfccFeatures) // add or update label
++void deleteLabel(string label)
++void addTerm(Term term);
++void deleteTerm(uint32_t id);
++bool loadPhonemeBook()
++bool loadTerms()
++bool persist()
++{static} void readHeader(istream& fs, string name)
++{static} int readNamedInt(istream& fs, string name, bool isPositive)
++{static} double readNamedDouble(istream& fs, string name)
++{static} string readNamedString(istream& fs, string name)
++{static} void processReadResults(bool isOk, string name, string actualValue)
+}
+
+PhonemeBook -up-* Storage
+Term -up-* Storage
+
+class SpeechProcessor {
+-Storage* storage
++Processor(Storage* storage)
++~Processor()
++vector<string>* mfccToObservations(const vector<MfccFeatures*>* mfcc)
++void trainModel(Term* term, const vector<MfccFeatures*>* data)
++Term* findBestTerm(const vector<Term*>* terms, const vector<MfccEntry*>* data)
+}
+
+class Term {
+-uint32_t id
+-vector<string>* observations
+-double** transitions
+-double** emissions
+-double* initialDst
+-string text
+-void normalize()
+-{static} void normalizeVector(double* vector, size_t size)
++void init(vector<state_t> states, vector<observation_t>,
+double\*\* transitions, double\*\* emissions, double* initialDst, string text)
++uint32_t getId()
++void setId(uint32_t id)
++const vector<observation_t>* getObservations()
++size_t getObservationCnt()
++double** getTransitions()
++double** getEmissions()
++double* getInitialDst()
++string getText()
+}
+
+Storage -up-o SpeechProcessor
+
+@enduml

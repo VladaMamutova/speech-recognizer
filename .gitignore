@@ -1,6 +1,3 @@
 .vscode
-diagrams
 src/speech_recognizer
 *.o
-src/storage
-src/resources
